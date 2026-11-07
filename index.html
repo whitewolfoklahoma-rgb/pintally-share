@@ -39,19 +39,32 @@ th{background:#e8f2e9}
 #termsGate .card{max-width:560px;width:100%}
 footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
 .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}
-.holechip{display:inline-block;min-width:34px;text-align:center;padding:6px 8px;margin:0 4px 6px 0;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--mut);font-weight:700}
+.holechip{display:inline-block;min-width:48px;min-height:48px;text-align:center;padding:10px 8px;margin:0 4px 6px 0;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--mut);font-weight:700}
 .holechip.on{background:var(--green2);color:#fff;border-color:var(--green2)}
 #saveHoleBtn{min-height:64px}
 #saveHoleBtn.saved{background:#e8f2e9;color:var(--green);border:2px solid var(--green2)}
 #saveToast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;background:var(--green);color:#fff;padding:12px 22px;border-radius:999px;font-weight:800;font-size:18px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:40;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap}
 #saveToast.show{opacity:1}
+#prevHoleBtn,#nextHoleBtn{min-height:64px;font-size:19px;font-weight:800}
+.quickrow{display:flex;gap:6px;margin-top:10px}
+.quickrow button{flex:1;min-height:52px;min-width:36px;font-weight:800;padding:6px 0;font-size:18px}
+.quicklbl{font-size:13px;color:var(--mut);margin-top:10px}
+#replayStage{position:relative;background:#000;border-radius:12px;overflow:hidden}
+#replayVideo{width:100%;display:block;max-height:62vh;background:#000}
+#tracerCanvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none}
+#distStamp{position:absolute;left:10px;bottom:10px;background:rgba(10,25,15,.85);color:#fff;padding:8px 12px;border-radius:10px;font-weight:800;font-size:16px;max-width:88%;display:none;pointer-events:none}
+#recPreview{width:100%;display:block;border-radius:12px;background:#000;max-height:62vh}
+#view-video button.on{background:var(--green);color:#fff;border-color:var(--green2)}
+input[type=range]{width:100%;min-height:48px;accent-color:var(--green2)}
+input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
+.vidchip{min-height:52px;margin:6px 6px 0 0;font-weight:700}
 </style>
 </head>
 <body>
 <div id="termsGate" role="dialog" aria-label="Terms">
   <div class="card">
     <h2>PinTally — please read</h2>
-    <p>PinTally keeps your golf scores, drive distances, and yards-to-the-pin on <b>this device only</b>. No account, no sign-in, nothing is sent anywhere. GPS distances come from your phone and are a guide — typically within about 5–10 yards under open sky — not a laser rangefinder.</p>
+    <p>PinTally keeps your golf scores, drive distances, yards-to-the-pin, and any swing videos you record on <b>this device only</b>. No account, no sign-in, nothing is sent anywhere. GPS distances come from your phone and are a guide — typically within about 5–10 yards under open sky — not a laser rangefinder.</p>
     <p>By using PinTally you agree to the Terms in the Help tab: the app is provided as-is by White Wolf Apps, scores and distances are for your own recreational use, and you are responsible for watching where you walk and swing.</p>
     <label style="display:flex;gap:10px;align-items:flex-start;font-weight:400"><input type="checkbox" id="termsCheck" style="width:26px;height:26px;flex:none"> <span>I have read and agree to the Terms above.</span></label>
     <button id="agreeBtn" class="primary big" disabled>Agree &amp; start</button>
@@ -94,6 +107,16 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
     </div>
 
     <div class="card">
+      <h3 style="margin-top:0">Scores — Hole <span id="scoreHoleNum">1</span></h3>
+      <div id="savedStrip" aria-label="Which holes are saved"></div>
+      <p class="note" id="savedLine" style="margin-top:0"></p>
+      <div id="playerRows"></div>
+      <button id="saveHoleBtn" class="primary big" style="margin-top:10px">✓ Save Hole 1</button>
+      <button id="nextHoleBtn2" class="big" style="margin-top:8px">Next hole ▶</button>
+      <button id="finishRoundBtn" class="primary big" style="margin-top:10px">Finish round &amp; save</button>
+    </div>
+
+    <div class="card">
       <h3 style="margin-top:0">How far was that shot?</h3>
       <p class="note">Tap <b>Mark tee</b> where you hit from, walk to your ball, tap <b>Mark ball</b>. Works for a drive or any shot.</p>
       <div class="row">
@@ -105,13 +128,55 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
       <button id="clearShotBtn" style="margin-top:8px;width:100%">Clear shot marks</button>
     </div>
 
+    <div class="card" id="filmCard">
+      <h3 style="margin-top:0">🎥 Swing video — Hole <span id="filmHoleNum">1</span></h3>
+      <p class="note">Prop the phone so it can see you and the ball, tap Film, take your swing, then tap Stop — your replay plays right away. One video per hole; filming again replaces it.</p>
+      <div id="recWrap" style="display:none">
+        <video id="recPreview" autoplay muted playsinline></video>
+        <div class="bigdist" id="recTimer" style="font-size:34px;margin-top:6px">0:00</div>
+        <button id="stopRecBtn" class="primary big" style="margin-top:6px">⏹ Stop &amp; watch replay</button>
+      </div>
+      <button id="filmBtn" class="primary big">🎥 Film my swing</button>
+      <button id="watchReplayBtn" class="big" style="display:none;margin-top:8px">🎥 Watch this hole's replay</button>
+      <div style="margin-top:10px">
+        <label for="videoFile" style="font-weight:400" class="note">…or use a swing video you already have:</label>
+        <input type="file" id="videoFile" accept="video/*">
+      </div>
+      <p class="note" id="filmStatus"></p>
+    </div>
+  </section>
+
+  <!-- REPLAY VIEW -->
+  <section id="view-video" class="view">
     <div class="card">
-      <h3 style="margin-top:0">Scores — Hole <span id="scoreHoleNum">1</span></h3>
-      <div id="savedStrip" aria-label="Which holes are saved"></div>
-      <p class="note" id="savedLine" style="margin-top:0"></p>
-      <div id="playerRows"></div>
-      <button id="saveHoleBtn" class="primary big" style="margin-top:10px">✓ Save Hole 1</button>
-      <button id="finishRoundBtn" class="primary big" style="margin-top:10px">Finish round &amp; save</button>
+      <h3 style="margin-top:0" id="replayTitle">Swing replay</h3>
+      <div id="replayStage">
+        <video id="replayVideo" playsinline></video>
+        <canvas id="tracerCanvas"></canvas>
+        <div id="distStamp"></div>
+      </div>
+      <p class="sub" id="replayStatus" style="margin:8px 0 0">Your replay plays once on its own. Use the controls below to watch it again, slow it down, or scrub through it.</p>
+      <input type="range" id="scrubBar" min="0" max="1000" value="0" aria-label="Scrub through the video">
+      <div class="row">
+        <button id="playPauseBtn" class="primary">⏸ Pause</button>
+        <button id="replayAgainBtn">↺ Replay</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="speedBtn" data-speed="0.25">🐢 0.25×</button>
+        <button class="speedBtn" data-speed="0.5">0.5×</button>
+        <button class="speedBtn on" data-speed="1">1×</button>
+      </div>
+      <h4 style="margin-bottom:4px">Ball-flight tracer</h4>
+      <p class="note" id="tracerHint" style="margin-top:0">Pick a drawing mode, then tap on the video where the ball flew. The glowing line replays with the video.</p>
+      <div class="row">
+        <button id="tracerPointsBtn">✏️ Tap the flight path</button>
+        <button id="tracerArcBtn">🏹 Quick arc</button>
+      </div>
+      <button id="tracerClearBtn" style="width:100%;margin-top:8px">Clear flight path</button>
+      <div class="row" style="margin-top:12px">
+        <button id="replayDoneBtn" class="primary">✓ Done</button>
+        <button id="deleteVideoBtn">🗑 Delete video</button>
+      </div>
     </div>
   </section>
 
@@ -121,6 +186,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
       <h3 style="margin-top:0">Scorecard</h3>
       <div class="scrollx"><table id="cardTable"></table></div>
       <div id="totalsBox"></div>
+      <div id="cardVideos"></div>
     </div>
   </section>
 
@@ -142,16 +208,19 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
   <section id="view-help" class="view">
     <div class="card">
       <h3 style="margin-top:0">Help</h3>
-      <p><b>Keep score:</b> Pick your course, then on each hole use the big − / + buttons for each player, or tap the 🎤 mic and just say the number (one tap, then speak). Totals vs par update on the Card tab.</p>
-      <p><b>Saving:</b> Every score, drive, and pin saves to this device the moment you enter it — nothing is lost if you close the app. When a hole is done, tap the big <b>“✓ Save Hole”</b> button: it turns into “Hole saved ✓”, the hole number fills in green in the saved row, and the hole gets a ✓ on the scorecard, so you can see at a glance which holes are recorded. Walking to the next hole saves the one you just left, too. If you change anything on a saved hole, the button flips back to “Save Hole” so you know to tap it again.</p>
+      <p><b>Keep score:</b> Pick your course, then on each hole use the big − / + buttons for each player, the quick number row under them, or tap the 🎤 mic and just say the number (one tap, then speak). Totals vs par update on the Card tab.</p>
+      <p><b>Saving:</b> Every score, drive, and pin saves to this device the moment you enter it — nothing is lost if you close the app. When a hole is done, tap the big <b>“✓ Save Hole”</b> button: it turns into “Hole saved ✓”, the hole number fills in green in the saved row, the hole gets a ✓ on the scorecard, and the app moves you to the next hole. Tap any hole number in the saved row to jump straight to that hole. Walking to the next hole with the Next button saves the one you just left, too. If you change anything on a saved hole, the button flips back to “Save Hole” so you know to tap it again.</p>
       <p><b>Drive / shot distance:</b> On the tee, tap “Mark tee”. Walk to your ball and tap “Mark ball”. PinTally shows the yards between the two spots and saves it as that hole's drive on the scorecard.</p>
       <p><b>Yards to the pin:</b> The first time you reach a green, stand by the flag and tap “Set pin here”. From then on, that hole shows your live yards to the pin. Pins are saved on your device per course, so they are still there next round. GPS needs location permission and open sky; accuracy is usually about 5–10 yards.</p>
+      <p><b>Swing video &amp; tracer:</b> On the Play tab, tap “🎥 Film my swing”, prop the phone where it can see you and the ball (behind you or off to the side, steady, a few steps back), take your swing, and tap Stop — the replay plays right away, with slow-motion and scrub controls for a closer look. One video per hole; filming a hole again replaces its old video.</p>
+      <p>To show the ball flight, use the <b>tracer</b> on the replay: pause where the swing starts, pick “✏️ Tap the flight path” and tap a few points along where the ball flew, or pick “🏹 Quick arc” and tap where the ball took off and where it landed (you can drag the top of the arc up or down). The glowing line then plays back in time with the video. <b>Being straight with you:</b> the tracer is drawn by your taps — a phone video of a small, fast ball isn't something any app can reliably spot on its own, so PinTally doesn't pretend to find the ball automatically. Your taps are what make the line honest.</p>
+      <p><b>Distance on the replay:</b> If you marked the tee and ball for that hole, the replay shows “Drive: NNN yd” from those marks. Mark the ball when you walk up to it and the stamp updates the next time you open the replay.</p>
       <p><b>Quail Ridge (Grove, OK):</b> Built in from its published scorecard — 9 holes, par 36, Blue tees 3,023 yards. Playing 18? Choose “Quail Ridge — 18 (play the 9 twice)” and the same 9 repeat as holes 10–18. No published green GPS exists for Quail Ridge, so set each pin once with “Set pin here”.</p>
       <p><b>Any other course:</b> Choose “Any course”, set 9 or 18 holes, and edit par and yards right on the Play tab — your edits save automatically.</p>
-      <p><b>Your data:</b> Everything — scores, rounds, pins — lives only on this device in your browser storage. There is no account and nothing is uploaded. To back up, finish rounds and keep this device/browser; clearing browser data erases your rounds.</p>
+      <p><b>Your data:</b> Everything — scores, rounds, pins, and swing videos — lives only on this device in your browser storage. There is no account and nothing is uploaded. Videos take real space on your phone, so delete ones you don't want from the replay screen. Deleting a saved round also deletes that round's swing videos, and starting a new round clears the current card's videos too. Clearing browser data erases everything, so keep this device/browser if your rounds matter to you.</p>
       <a id="emailUsBtn" href="mailto:whitewolfbackoffice@gmail.com"><button class="primary big" type="button">✉️ Email us</button></a>
       <h4>Terms &amp; privacy (short version)</h4>
-      <p class="note">PinTally is made by White Wolf Apps. Contact: whitewolfbackoffice@gmail.com. The app is provided as-is for recreational scorekeeping. GPS distances are estimates from your phone's location and may be off — always check the course markers too. PinTally collects no personal data, shows no accounts, and sends nothing off your device; your phone's location is used only on-device to compute distances. Play safe: watch for other golfers, carts, and hazards while using your phone.</p>
+      <p class="note">PinTally is made by White Wolf Apps. Contact: whitewolfbackoffice@gmail.com. The app is provided as-is for recreational scorekeeping. GPS distances are estimates from your phone's location and may be off — always check the course markers too. PinTally collects no personal data, shows no accounts, and sends nothing off your device; your phone's location is used only on-device to compute distances, and your camera is used only when you tap Film — recordings stay on your device. Play safe: watch for other golfers, carts, and hazards while using your phone.</p>
     </div>
   </section>
   <footer>PinTally <span id="verFoot"></span> · White Wolf Apps · Works offline, no account</footer>
@@ -165,7 +234,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
 </nav>
 <script>
 "use strict";
-var VERSION = "v1.1";
+var VERSION = "v1.2";
 var STORE_KEY = "pintally_v1";
 
 /* Quail Ridge Golf and Event Venue, 519 Quail Run Rd, Grove, OK.
@@ -204,6 +273,7 @@ function defaultState(){
     marks:{}, /* hole -> {tee:{lat,lng}, ball:{lat,lng}} */
     pins:{}, /* courseId -> {hole:{lat,lng}} */
     savedHoles:{}, /* hole -> true once that hole is confirmed saved (Save button or moving on) */
+    videoRefs:{}, /* hole -> IndexedDB video id, for the CURRENT card only */
     history:[]
   };
 }
@@ -243,7 +313,13 @@ function renderPlayers(){
       plus.onclick=function(){ setScore(i, Math.min(30,(state.scores[key]||0)+1)); };
       mic.onclick=function(){ voiceScore(i, mic); };
       st.appendChild(minus); st.appendChild(v); st.appendChild(plus); st.appendChild(mic);
-      div.appendChild(st); wrap.appendChild(div);
+      div.appendChild(st);
+      var ql=document.createElement("div"); ql.className="quicklbl"; ql.textContent="Quick score — tap a number:"; div.appendChild(ql);
+      var qr=document.createElement("div"); qr.className="quickrow";
+      [1,2,3,4,5,6,7,8].forEach(function(n){ var b=document.createElement("button"); b.textContent=n; b.setAttribute("aria-label","Set "+n+" strokes for "+state.players[i]);
+        b.onclick=function(){ setScore(i, n); }; qr.appendChild(b); });
+      div.appendChild(qr);
+      wrap.appendChild(div);
     })(i);
   }
   var names = $("playerNames"); names.innerHTML="";
@@ -280,17 +356,26 @@ function renderSaveUI(){
   var h=state.currentHole, c=course(), saved=!!state.savedHoles[h];
   btn.textContent = saved ? ("Hole "+h+" saved ✓") : ("✓ Save Hole "+h);
   btn.classList.toggle("saved", saved);
-  var html=""; for(var n=1;n<=c.holes;n++){ var on=!!state.savedHoles[n]; html+='<span class="holechip'+(on?" on":"")+'">'+n+(on?" ✓":"")+'</span>'; }
-  $("savedStrip").innerHTML=html;
+  $("nextHoleBtn2").textContent = h<c.holes ? "Next hole ▶" : "Last hole — Finish below ⬇";
+  var strip=$("savedStrip"); strip.innerHTML="";
+  for(var n=1;n<=c.holes;n++){
+    (function(n){
+      var on=!!state.savedHoles[n];
+      var b=document.createElement("button"); b.className="holechip"+(on?" on":""); b.textContent=n+(on?" ✓":"");
+      b.setAttribute("aria-label","Go to hole "+n+(on?" (saved)":""));
+      b.onclick=function(){ if(state.currentHole!==n) leaveHole(n); };
+      strip.appendChild(b);
+    })(n);
+  }
   var cnt=0, list=[]; for(var k=1;k<=c.holes;k++){ if(state.savedHoles[k]){ cnt++; list.push(k); } }
-  $("savedLine").textContent = cnt ? ("Holes saved: "+list.join(", ")+" ✓ — "+cnt+" of "+c.holes) : "Scores save automatically as you go. Tap ✓ Save Hole when a hole is done so it gets its checkmark.";
+  $("savedLine").textContent = cnt ? ("Holes saved: "+list.join(", ")+" ✓ — "+cnt+" of "+c.holes+" · tap a number to jump to that hole") : "Scores save automatically as you go. Tap ✓ Save Hole when a hole is done so it gets its checkmark.";
 }
 
 function renderHole(){
   var c=course(), h=state.currentHole;
   $("holeNum").textContent=h; $("parInput").value=c.pars[h-1]; $("yardsInput").value=c.yards[h-1]||"";
   $("hdrSub").textContent = c.name+" · Hole "+h+" of "+c.holes;
-  renderPin(); renderShot();
+  renderPin(); renderShot(); renderFilm();
 }
 function pinFor(h){ var byCourse = state.pins[state.courseId]||{}; return byCourse[h]||null; }
 function renderPin(){
@@ -325,7 +410,7 @@ function totalsFor(i){
 }
 function renderCard(){
   var c=course(), t=$("cardTable"); var html="<tr><th>Hole</th>";
-  for(var h=1;h<=c.holes;h++) html+="<th>"+h+(state.savedHoles[h]?" ✓":"")+"</th>"; html+="<th>Out</th>"+(c.holes>9?"<th>In</th>":"")+"<th>Total</th></tr>";
+  for(var h=1;h<=c.holes;h++) html+="<th>"+h+(state.savedHoles[h]?" ✓":"")+(state.videoRefs[h]?" 🎥":"")+"</th>"; html+="<th>Out</th>"+(c.holes>9?"<th>In</th>":"")+"<th>Total</th></tr>";
   html+="<tr><th>Par</th>"; var po=0,pb=0; for(var h2=1;h2<=c.holes;h2++){ html+="<td>"+c.pars[h2-1]+"</td>"; if(h2<=9)po+=c.pars[h2-1]; else pb+=c.pars[h2-1]; }
   html+="<td><b>"+po+"</b></td>"+(c.holes>9?"<td><b>"+pb+"</b></td>":"")+"<td><b>"+(po+pb)+"</b></td></tr>";
   html+="<tr><th>Yards</th>"; var yo=0,yb=0; for(var h3=1;h3<=c.holes;h3++){ html+="<td>"+(c.yards[h3-1]||"–")+"</td>"; if(h3<=9)yo+=c.yards[h3-1]||0; else yb+=c.yards[h3-1]||0; }
@@ -343,6 +428,13 @@ function renderCard(){
   var savedList=[]; for(var s2=1;s2<=c.holes;s2++){ if(state.savedHoles[s2]) savedList.push(s2); }
   out+='<div class="kv"><span>Holes saved ✓</span><span>'+(savedList.length? savedList.join(", "):"None yet")+'</span></div>';
   box.innerHTML=out;
+  var cv=$("cardVideos"); cv.innerHTML="";
+  var vholes=Object.keys(state.videoRefs).map(Number).sort(function(a,b){return a-b;});
+  if(vholes.length){
+    var lab=document.createElement("div"); lab.style.marginTop="10px"; lab.innerHTML="<b>Swing videos</b> <span class='note'>— tap to watch the replay with its tracer</span>"; cv.appendChild(lab);
+    vholes.forEach(function(hh){ var b=document.createElement("button"); b.className="vidchip"; b.textContent="🎥 Hole "+hh;
+      b.onclick=function(){ openReplay(state.videoRefs[hh], hh, null, "card"); }; cv.appendChild(b); });
+  }
 }
 function renderHistory(){
   var list=$("historyList"); list.innerHTML="";
@@ -352,8 +444,16 @@ function renderHistory(){
     var div=document.createElement("div"); div.className="kv";
     div.innerHTML="<span><b>"+esc(r.courseName)+"</b><br><span class='note'>"+esc(r.date)+" · "+esc(r.summary)+"</span></span>";
     var del=document.createElement("button"); del.textContent="Delete"; del.setAttribute("aria-label","Delete round "+r.date);
-    del.onclick=function(){ if(confirm("Delete this saved round?")){ state.history.splice(idx,1); save(); renderHistory(); } };
+    del.onclick=function(){ if(confirm("Delete this saved round? Its swing videos are deleted too.")){ var vids=r.videos||{}; Object.keys(vids).forEach(function(hh){ deleteVideoId(vids[hh]); }); state.history.splice(idx,1); save(); renderHistory(); } };
     div.appendChild(del); list.appendChild(div);
+    var vids2=r.videos||{}; var vholes=Object.keys(vids2).map(Number).sort(function(a,b){return a-b;});
+    if(vholes.length){
+      var vrow=document.createElement("div");
+      var vlab=document.createElement("span"); vlab.className="note"; vlab.textContent="Swing videos: "; vrow.appendChild(vlab);
+      vholes.forEach(function(hh){ var b=document.createElement("button"); b.className="vidchip"; b.textContent="🎥 Hole "+hh;
+        b.onclick=function(){ openReplay(vids2[hh], hh, idx, "history"); }; vrow.appendChild(b); });
+      list.appendChild(vrow);
+    }
   });
 }
 /* Voice */
@@ -383,12 +483,252 @@ function voiceText(inp, btn){
   rec.onend=function(){ btn.textContent="🎤"; };
   try{ rec.start(); }catch(e){ btn.textContent="🎤"; }
 }
+
+/* ===== Swing videos: stored in IndexedDB on this device only (localStorage can't hold video) ===== */
+var IDB_NAME = "pintally-media";
+var sessionVideos = {}; /* id -> record (with Blob), for this session */
+function idbOpen(){
+  return new Promise(function(res, rej){
+    if(!window.indexedDB){ rej(new Error("IndexedDB unavailable")); return; }
+    var rq = indexedDB.open(IDB_NAME, 1);
+    rq.onupgradeneeded = function(){ rq.result.createObjectStore("videos", {keyPath:"id"}); };
+    rq.onsuccess = function(){ res(rq.result); };
+    rq.onerror = function(){ rej(rq.error); };
+  });
+}
+function idbPut(rec){
+  return idbOpen().then(function(db){ return new Promise(function(res, rej){
+    var tx = db.transaction("videos", "readwrite");
+    tx.objectStore("videos").put(rec);
+    tx.oncomplete = function(){ res(true); };
+    tx.onerror = function(){ rej(tx.error); };
+    tx.onabort = function(){ rej(tx.error || new Error("IndexedDB write aborted")); };
+  }); });
+}
+function idbGet(id){
+  return idbOpen().then(function(db){ return new Promise(function(res, rej){
+    var rq = db.transaction("videos", "readonly").objectStore("videos").get(id);
+    rq.onsuccess = function(){ res(rq.result || null); };
+    rq.onerror = function(){ rej(rq.error); };
+  }); }).catch(function(){ return null; });
+}
+function idbDel(id){
+  return idbOpen().then(function(db){ return new Promise(function(res){
+    var tx = db.transaction("videos", "readwrite");
+    tx.objectStore("videos").delete(id);
+    tx.oncomplete = function(){ res(true); };
+    tx.onerror = function(){ res(false); };
+  }); }).catch(function(){ return false; });
+}
+function getVideoRec(id){
+  if(sessionVideos[id]) return Promise.resolve(sessionVideos[id]);
+  return idbGet(id).then(function(r){ if(r) sessionVideos[id]=r; return r; });
+}
+function deleteVideoId(id){ if(!id) return; delete sessionVideos[id]; idbDel(id); }
+
+/* ===== Recording ===== */
+var mediaRec=null, mediaStream=null, recChunks=[], recTimerInt=null, recStartAt=0, recHole=1, recording=false;
+function recSupported(){ return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder); }
+function renderFilm(){
+  var h=state.currentHole;
+  $("filmHoleNum").textContent=h;
+  var has=!!state.videoRefs[h];
+  var w=$("watchReplayBtn");
+  w.style.display = has? "block":"none";
+  w.textContent = "🎥 Watch hole "+h+" replay";
+  if(!recording){
+    if(recSupported()){ $("filmBtn").style.display="block"; }
+    else { $("filmBtn").style.display="none"; if(!$("filmStatus").textContent) $("filmStatus").textContent="In-app recording isn't available in this browser — pick a swing video below and PinTally will still give it the replay + tracer."; }
+  }
+}
+function startRecording(){
+  if(!recSupported()){ $("filmStatus").textContent="This browser can't record video inside the app — use “use a swing video you already have” below instead."; return; }
+  recHole=state.currentHole;
+  navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}, audio:false}).then(function(stream){
+    mediaStream=stream;
+    $("recPreview").srcObject=stream;
+    recChunks=[];
+    try{ mediaRec=new MediaRecorder(stream); }catch(e){ stopStream(); $("filmStatus").textContent="Recording isn't available in this browser — pick a swing video below instead."; return; }
+    mediaRec.ondataavailable=function(ev){ if(ev.data && ev.data.size) recChunks.push(ev.data); };
+    mediaRec.onstop=onRecStop;
+    try{ mediaRec.start(250); }catch(e){ stopStream(); $("filmStatus").textContent="Recording couldn't start — pick a swing video below instead."; return; }
+    recording=true;
+    $("recWrap").style.display="block"; $("filmBtn").style.display="none";
+    recStartAt=Date.now(); $("recTimer").textContent="0:00";
+    if(recTimerInt) clearInterval(recTimerInt);
+    recTimerInt=setInterval(function(){ var s=Math.floor((Date.now()-recStartAt)/1000); $("recTimer").textContent=Math.floor(s/60)+":"+("0"+(s%60)).slice(-2); if(s>=60) stopRecording(); },250);
+    $("filmStatus").textContent="Recording hole "+recHole+"… it stops on its own at 1:00.";
+  }).catch(function(){ $("filmStatus").textContent="The camera didn't open — check the camera permission for this site, or pick a swing video below instead."; });
+}
+function stopStream(){ if(mediaStream){ mediaStream.getTracks().forEach(function(t){ try{ t.stop(); }catch(e){} }); mediaStream=null; } }
+function stopRecording(){ if(mediaRec && mediaRec.state!=="inactive"){ try{ mediaRec.stop(); }catch(e){ onRecStopCleanup(); } } }
+function onRecStopCleanup(){
+  if(recTimerInt) clearInterval(recTimerInt);
+  stopStream(); recording=false;
+  $("recWrap").style.display="none"; $("filmBtn").style.display = recSupported()? "block":"none";
+}
+function onRecStop(){
+  onRecStopCleanup();
+  var type=(recChunks[0] && recChunks[0].type) || "video/webm";
+  var blob=new Blob(recChunks, {type:type});
+  recChunks=[];
+  if(!blob.size){ $("filmStatus").textContent="That recording came out empty — try filming again."; return; }
+  storeVideo(blob, recHole, "Recorded");
+}
+function storeVideo(blob, hole, how){
+  var oldId=state.videoRefs[hole] || null;
+  var rec={id:"v"+Date.now(), hole:hole, courseId:state.courseId, ts:Date.now(), blob:blob,
+           tracer:{type:null, points:[], a:null, b:null, ctrl:null}};
+  sessionVideos[rec.id]=rec;
+  state.videoRefs[hole]=rec.id; save(); renderFilm(); renderCard();
+  idbPut(rec).then(function(){
+    if(oldId && oldId!==rec.id) deleteVideoId(oldId);
+    $("filmStatus").textContent=how+" — saved on this phone under hole "+hole+". Opening your replay…";
+    openReplay(rec.id, hole, null, "play");
+  }, function(){
+    flashSaved("Couldn't save that video — phone storage may be full");
+    $("filmStatus").textContent="This phone's video storage is full or blocked, so that video only lasts until you close the app — it still replays now, but it won't be here later.";
+    openReplay(rec.id, hole, null, "play");
+  });
+}
+
+/* ===== Replay + tracer ===== */
+var curRec=null, curReplayCtx=null, editMode=null, dragCtrl=false, drawRAF=null;
+function openReplay(videoId, hole, historyIdx, from){
+  getVideoRec(videoId).then(function(rec){
+    if(!rec || !rec.blob){ flashSaved("That video isn't on this phone anymore"); return; }
+    curRec=rec; curReplayCtx={hole:hole, historyIdx:(historyIdx==null? null:historyIdx), from:from||"play"};
+    if(!curRec.tracer) curRec.tracer={type:null, points:[], a:null, b:null, ctrl:null};
+    var vid=$("replayVideo");
+    if(vid._objUrl){ try{ URL.revokeObjectURL(vid._objUrl); }catch(e){} }
+    vid._objUrl=URL.createObjectURL(rec.blob);
+    vid.src=vid._objUrl; vid.playbackRate=1;
+    document.querySelectorAll(".speedBtn").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-speed")==="1"); });
+    $("replayTitle").textContent="Swing replay — Hole "+hole;
+    $("replayStatus").textContent="Your replay is playing. Slow it down or scrub to study the swing; draw the ball flight with the tracer below.";
+    renderDistStamp(); setEditMode(null);
+    showView("video");
+    vid.onloadedmetadata=function(){ sizeCanvas(); drawTracer(); };
+    var pr=vid.play(); if(pr && pr.catch) pr.catch(function(){ $("replayStatus").textContent="Tap ▶ Play to watch your swing."; });
+    setTimeout(sizeCanvas, 60);
+    startDrawLoop();
+  });
+}
+function closeReplay(){
+  var vid=$("replayVideo"); try{ vid.pause(); }catch(e){}
+  stopDrawLoop(); curRec=null; curReplayCtx=null;
+}
+function renderDistStamp(){
+  if(!curReplayCtx) return;
+  var hole=curReplayCtx.hole, d=null, marks=null;
+  if(curReplayCtx.historyIdx==null){ d=state.drives[hole]; marks=state.marks[hole]; }
+  else { var e=state.history[curReplayCtx.historyIdx]; if(e){ d=(e.drives||{})[hole]; marks=(e.marks||{})[hole]; } }
+  var el=$("distStamp"); el.style.display="block";
+  if(d){ el.textContent="🏌️ Drive: "+d+" yd — from your tee/ball marks"; }
+  else if(marks && marks.tee){ el.textContent="Tee is marked — walk to your ball, tap Mark ball on the Play screen, and the drive distance stamps itself here."; }
+  else { el.textContent="No drive marked for this hole — Mark tee & Mark ball on the Play screen stamps the distance here."; }
+}
+function sizeCanvas(){
+  var vid=$("replayVideo"), cv=$("tracerCanvas"); if(!vid || !cv) return;
+  var r=vid.getBoundingClientRect(); if(!r.width) return;
+  var dpr=window.devicePixelRatio||1;
+  cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.height*dpr);
+}
+function tracerPathPoints(tr){
+  if(!tr) return null;
+  if(tr.type==="points" && tr.points && tr.points.length) return tr.points;
+  if(tr.type==="arc" && tr.a && tr.b && tr.ctrl){
+    var pts=[]; for(var i=0;i<=40;i++){ var t=i/40, u=1-t;
+      pts.push({x:u*u*tr.a.x + 2*u*t*tr.ctrl.x + t*t*tr.b.x, y:u*u*tr.a.y + 2*u*t*tr.ctrl.y + t*t*tr.b.y}); }
+    return pts;
+  }
+  return null;
+}
+function drawTracer(){
+  var cv=$("tracerCanvas"); if(!cv || !cv.width) return;
+  var ctx=cv.getContext("2d"), W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  if(!curRec) return;
+  var tr=curRec.tracer, pts=tracerPathPoints(tr);
+  /* Editing handles / lone points stay visible whatever the playhead is doing */
+  ctx.shadowBlur=0;
+  if(tr.type==="points" && tr.points){ tr.points.forEach(function(p){ ctx.beginPath(); ctx.arc(p.x*W, p.y*H, Math.max(4,W*0.008), 0, 7); ctx.fillStyle="rgba(255,255,255,.9)"; ctx.fill(); }); }
+  if(tr.type==="arc" && tr.a){ ctx.beginPath(); ctx.arc(tr.a.x*W, tr.a.y*H, Math.max(5,W*0.01), 0, 7); ctx.fillStyle="#fff"; ctx.fill(); }
+  if(tr.type==="arc" && tr.b){ ctx.beginPath(); ctx.arc(tr.b.x*W, tr.b.y*H, Math.max(5,W*0.01), 0, 7); ctx.fillStyle="#fff"; ctx.fill(); }
+  if(tr.type==="arc" && tr.ctrl){ ctx.beginPath(); ctx.arc(tr.ctrl.x*W, tr.ctrl.y*H, Math.max(7,W*0.014), 0, 7); ctx.fillStyle="rgba(255,225,77,.95)"; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle="#7c2d12"; ctx.stroke(); }
+  if(!pts || pts.length<2) return;
+  /* Full path, faint — so the drawn flight is visible while editing */
+  ctx.beginPath(); pts.forEach(function(p,i){ if(i===0) ctx.moveTo(p.x*W, p.y*H); else ctx.lineTo(p.x*W, p.y*H); });
+  ctx.strokeStyle="rgba(255,225,77,.30)"; ctx.lineWidth=Math.max(3, W*0.006); ctx.shadowBlur=0; ctx.stroke();
+  /* Bright portion synced to the playhead: reveals as the video advances */
+  var vid=$("replayVideo");
+  var prog=(vid.duration && isFinite(vid.duration))? Math.min(1, Math.max(0, vid.currentTime/vid.duration)) : 1;
+  var lens=[0], total=0;
+  for(var i=1;i<pts.length;i++){ var dx=pts[i].x-pts[i-1].x, dy=pts[i].y-pts[i-1].y; total+=Math.sqrt(dx*dx+dy*dy); lens.push(total); }
+  if(!total) return;
+  var target=prog*total;
+  ctx.beginPath(); ctx.moveTo(pts[0].x*W, pts[0].y*H);
+  var head={x:pts[0].x, y:pts[0].y};
+  for(var j=1;j<pts.length;j++){
+    if(lens[j]<=target){ ctx.lineTo(pts[j].x*W, pts[j].y*H); head=pts[j]; }
+    else { var f=(target-lens[j-1])/((lens[j]-lens[j-1])||1); head={x:pts[j-1].x+(pts[j].x-pts[j-1].x)*f, y:pts[j-1].y+(pts[j].y-pts[j-1].y)*f}; ctx.lineTo(head.x*W, head.y*H); break; }
+  }
+  ctx.strokeStyle="#ffe14d"; ctx.lineWidth=Math.max(4, W*0.009); ctx.lineCap="round"; ctx.lineJoin="round";
+  ctx.shadowColor="rgba(255,150,0,.95)"; ctx.shadowBlur=W*0.02; ctx.stroke();
+  ctx.shadowBlur=0; ctx.beginPath(); ctx.arc(head.x*W, head.y*H, Math.max(5, W*0.011), 0, 7); ctx.fillStyle="#fff"; ctx.fill();
+  ctx.lineWidth=2; ctx.strokeStyle="#b45309"; ctx.stroke();
+}
+function startDrawLoop(){
+  stopDrawLoop();
+  var step=function(){
+    drawTracer();
+    var vid=$("replayVideo"), sb=$("scrubBar");
+    if(vid.duration && document.activeElement!==sb) sb.value=Math.round(1000*vid.currentTime/vid.duration);
+    if($("view-video").classList.contains("on") && curRec) drawRAF=requestAnimationFrame(step);
+  };
+  drawRAF=requestAnimationFrame(step);
+}
+function stopDrawLoop(){ if(drawRAF) cancelAnimationFrame(drawRAF); drawRAF=null; }
+function persistTracer(){
+  if(!curRec) return;
+  sessionVideos[curRec.id]=curRec;
+  idbPut(curRec).then(function(){}, function(){ flashSaved("Couldn't save the flight path on this phone"); });
+}
+function setEditMode(m){
+  editMode = (m && editMode!==m)? m : null;
+  $("tracerPointsBtn").classList.toggle("on", editMode==="points");
+  $("tracerArcBtn").classList.toggle("on", editMode==="arc");
+  updateTracerHint();
+}
+function updateTracerHint(){
+  var el=$("tracerHint"); if(!curRec){ el.textContent="Pick a drawing mode, then tap on the video where the ball flew. The glowing line replays with the video."; return; }
+  var tr=curRec.tracer;
+  if(editMode==="points"){ el.textContent="Tap points along the ball's flight, in the order it flew ("+(tr.points? tr.points.length:0)+" taps so far). Pause the video wherever you like — the line saves itself."; }
+  else if(editMode==="arc"){
+    if(!tr.a || tr.type!=="arc") el.textContent="Tap where the ball took off.";
+    else if(!tr.b) el.textContent="Takeoff set — now tap where the ball landed.";
+    else el.textContent="Arc drawn. Drag the yellow dot to raise or lower the top of the flight, or tap anywhere to start the arc over.";
+  }
+  else if(tr.type){ el.textContent="Flight path saved for this hole. It plays back with the video — pick a drawing mode to change it, or Clear to remove it."; }
+  else { el.textContent="Pick a drawing mode, then tap on the video where the ball flew. The glowing line replays with the video."; }
+}
+function canvasPoint(ev){ var r=$("tracerCanvas").getBoundingClientRect(); return {x:Math.min(1, Math.max(0,(ev.clientX-r.left)/r.width)), y:Math.min(1, Math.max(0,(ev.clientY-r.top)/r.height))}; }
+function fracDist(a, b){ return Math.sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y)); }
+
 /* Wiring */
 function showView(name){ document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("on"); }); $("view-"+name).classList.add("on");
   document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-view")===name); }); }
-document.querySelectorAll("nav.tabs button").forEach(function(b){ b.onclick=function(){ showView(b.getAttribute("data-view")); }; });
-$("courseSel").onchange=function(){ state.courseId=$("courseSel").value; state.currentHole=1; state.savedHoles={}; save(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); };
-$("newRoundBtn").onclick=function(){ if(confirm("Start a new round? Current scores on this card will be cleared.")){ state.scores={}; state.drives={}; state.marks={}; state.savedHoles={}; state.currentHole=1; save(); renderHole(); renderPlayers(); renderCard(); } };
+document.querySelectorAll("nav.tabs button").forEach(function(b){ b.onclick=function(){ if(b.getAttribute("data-view")!=="video") closeReplay(); showView(b.getAttribute("data-view")); }; });
+$("courseSel").onchange=function(){
+  var next=$("courseSel").value;
+  if(next!==state.courseId && Object.keys(state.videoRefs).length){
+    if(!confirm("Switching courses clears this card — including its swing videos. Switch course?")){ $("courseSel").value=state.courseId; return; }
+    Object.keys(state.videoRefs).forEach(function(hh){ deleteVideoId(state.videoRefs[hh]); });
+    state.videoRefs={};
+  }
+  state.courseId=next; state.currentHole=1; state.savedHoles={}; save(); renderCourseSel(); renderHole(); renderPlayers(); renderCard();
+};
+$("newRoundBtn").onclick=function(){ if(confirm("Start a new round? Current scores on this card will be cleared, along with this card's swing videos.")){ Object.keys(state.videoRefs).forEach(function(hh){ deleteVideoId(state.videoRefs[hh]); }); state.videoRefs={}; state.scores={}; state.drives={}; state.marks={}; state.savedHoles={}; state.currentHole=1; save(); renderHole(); renderPlayers(); renderCard(); } };
 function leaveHole(dest){ /* moving off a hole auto-saves it (checkmark) and says so */
   var leaving=state.currentHole, auto=false;
   if(holeHasData(leaving) && !state.savedHoles[leaving]){ markHoleSaved(leaving); auto=true; }
@@ -398,9 +738,11 @@ function leaveHole(dest){ /* moving off a hole auto-saves it (checkmark) and say
 }
 $("prevHoleBtn").onclick=function(){ if(state.currentHole>1) leaveHole(state.currentHole-1); };
 $("nextHoleBtn").onclick=function(){ if(state.currentHole<course().holes) leaveHole(state.currentHole+1); else leaveHole(state.currentHole); };
+$("nextHoleBtn2").onclick=function(){ if(state.currentHole<course().holes) leaveHole(state.currentHole+1); else leaveHole(state.currentHole); };
 $("saveHoleBtn").onclick=function(){ var h=state.currentHole;
   if(!holeHasData(h)){ flashSaved("Nothing on hole "+h+" yet — enter a score first"); return; }
-  markHoleSaved(h); renderSaveUI(); renderCard(); flashSaved("Hole "+h+" saved ✓"); };
+  markHoleSaved(h); renderSaveUI(); renderCard(); flashSaved("Hole "+h+" saved ✓");
+  if(h<course().holes){ setTimeout(function(){ if(state.currentHole===h) leaveHole(h+1); }, 900); } };
 $("parInput").onchange=function(){ var v=parseInt($("parInput").value,10); if(v>=3&&v<=6){ setCustomField("pars", state.currentHole-1, v); touchHole(state.currentHole); save(); } renderPlayers(); renderCard(); };
 $("yardsInput").onchange=function(){ var v=parseInt($("yardsInput").value,10); if(!isNaN(v)&&v>=0&&v<=700){ setCustomField("yards", state.currentHole-1, v); touchHole(state.currentHole); save(); } renderSaveUI(); renderCard(); };
 $("setPinBtn").onclick=function(){ getPos(function(pos){ if(!state.pins[state.courseId]) state.pins[state.courseId]={}; state.pins[state.courseId][state.currentHole]=pos; touchHole(state.currentHole); save(); renderSaveUI(); $("pinStatus").textContent="Pin saved for hole "+state.currentHole+"."; updateDistToPin(); }, function(msg){ $("pinStatus").textContent=msg; }); };
@@ -411,8 +753,52 @@ $("markBallBtn").onclick=function(){ var h=state.currentHole, m=state.marks[h]; 
 $("clearShotBtn").onclick=function(){ var h=state.currentHole; delete state.marks[h]; delete state.drives[h]; touchHole(h); save(); renderShot(); renderSaveUI(); renderCard(); };
 $("finishRoundBtn").onclick=function(){ var c=course(); var parts=[]; for(var i=0;i<state.playerCount;i++){ var z=totalsFor(i); if(z.played) parts.push(state.players[i]+" "+z.total+" ("+fmtVsPar(z.vs)+")"); }
   if(!parts.length){ alert("Enter at least one score before finishing the round."); return; }
-  state.history.push({date:new Date().toLocaleString(), courseName:c.name, summary:parts.join(" · ")}); state.scores={}; state.drives={}; state.marks={}; state.savedHoles={}; state.currentHole=1; save(); renderHole(); renderPlayers(); renderCard(); renderHistory(); showView("history"); };
-$("clearDemoBtn").onclick=function(){ if(confirm("Clear sample data? This clears the current card and saved rounds on this device.")){ var keepPins=state.pins; state=Object.assign(defaultState(),{termsAccepted:true, pins:keepPins}); save(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory(); } };
+  state.history.push({date:new Date().toLocaleString(), courseName:c.name, summary:parts.join(" · "),
+    videos:Object.assign({}, state.videoRefs),
+    drives:Object.assign({}, state.drives),
+    marks:JSON.parse(JSON.stringify(state.marks))});
+  state.videoRefs={}; state.scores={}; state.drives={}; state.marks={}; state.savedHoles={}; state.currentHole=1; save(); renderHole(); renderPlayers(); renderCard(); renderHistory(); showView("history"); };
+$("clearDemoBtn").onclick=function(){ if(confirm("Clear sample data? This clears the current card, saved rounds, and all swing videos on this device.")){ Object.keys(state.videoRefs).forEach(function(hh){ deleteVideoId(state.videoRefs[hh]); }); state.history.forEach(function(r){ var vv=r.videos||{}; Object.keys(vv).forEach(function(hh){ deleteVideoId(vv[hh]); }); }); var keepPins=state.pins; state=Object.assign(defaultState(),{termsAccepted:true, pins:keepPins}); save(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory(); } };
+$("filmBtn").onclick=function(){ startRecording(); };
+$("stopRecBtn").onclick=function(){ stopRecording(); };
+$("watchReplayBtn").onclick=function(){ var id=state.videoRefs[state.currentHole]; if(id) openReplay(id, state.currentHole, null, "play"); };
+$("videoFile").onchange=function(){ var f=$("videoFile").files[0]; if(!f) return; storeVideo(f, state.currentHole, "Added from your gallery"); $("videoFile").value=""; };
+$("playPauseBtn").onclick=function(){ var vid=$("replayVideo"); if(vid.paused) vid.play(); else vid.pause(); };
+$("replayVideo").addEventListener("play", function(){ $("playPauseBtn").textContent="⏸ Pause"; });
+$("replayVideo").addEventListener("pause", function(){ $("playPauseBtn").textContent="▶ Play"; });
+$("replayVideo").addEventListener("ended", function(){ $("replayStatus").textContent="That's the swing. Tap ↺ Replay to watch it again, or draw the ball flight with the tracer."; });
+$("replayAgainBtn").onclick=function(){ var vid=$("replayVideo"); vid.currentTime=0; vid.play(); };
+$("scrubBar").addEventListener("input", function(){ var vid=$("replayVideo"); if(vid.duration && isFinite(vid.duration)){ vid.currentTime=($("scrubBar").value/1000)*vid.duration; drawTracer(); } });
+document.querySelectorAll(".speedBtn").forEach(function(b){ b.onclick=function(){ var vid=$("replayVideo"); vid.playbackRate=parseFloat(b.getAttribute("data-speed")); document.querySelectorAll(".speedBtn").forEach(function(x){ x.classList.toggle("on", x===b); }); }; });
+$("tracerPointsBtn").onclick=function(){ setEditMode(editMode==="points"? null:"points"); };
+$("tracerArcBtn").onclick=function(){ setEditMode(editMode==="arc"? null:"arc"); };
+$("tracerClearBtn").onclick=function(){ if(!curRec) return; curRec.tracer={type:null, points:[], a:null, b:null, ctrl:null}; persistTracer(); updateTracerHint(); drawTracer(); flashSaved("Flight path cleared"); };
+$("replayDoneBtn").onclick=function(){ var from=curReplayCtx? curReplayCtx.from : "play"; closeReplay(); renderFilm(); renderCard(); renderHistory(); showView(from==="card"? "card" : (from==="history"? "history" : "play")); };
+$("deleteVideoBtn").onclick=function(){ if(!curRec) return; if(!confirm("Delete this swing video? This can't be undone.")) return;
+  var id=curRec.id, ctx=curReplayCtx;
+  deleteVideoId(id);
+  if(ctx.historyIdx==null){ if(state.videoRefs[ctx.hole]===id) delete state.videoRefs[ctx.hole]; }
+  else { var e=state.history[ctx.historyIdx]; if(e && e.videos && e.videos[ctx.hole]===id) delete e.videos[ctx.hole]; }
+  save(); closeReplay(); renderFilm(); renderCard(); renderHistory(); showView(ctx.historyIdx==null? "play":"history"); flashSaved("Video deleted"); };
+$("tracerCanvas").addEventListener("pointerdown", function(ev){
+  if(!curRec || !editMode) return;
+  var pt=canvasPoint(ev), tr=curRec.tracer;
+  if(editMode==="arc" && tr.type==="arc" && tr.ctrl && fracDist(pt, tr.ctrl)<0.10){ dragCtrl=true; try{ $("tracerCanvas").setPointerCapture(ev.pointerId); }catch(e){} return; }
+  if(editMode==="points"){
+    if(tr.type!=="points"){ tr.type="points"; tr.points=[]; }
+    tr.points.push(pt); persistTracer(); updateTracerHint(); drawTracer();
+  } else if(editMode==="arc"){
+    if(tr.type!=="arc" || (tr.a && tr.b)){ tr.type="arc"; tr.a=pt; tr.b=null; tr.ctrl=null; }
+    else if(!tr.b){ tr.b=pt; tr.ctrl={x:(tr.a.x+pt.x)/2, y:Math.min(tr.a.y, pt.y)-0.25}; }
+    persistTracer(); updateTracerHint(); drawTracer();
+  }
+});
+$("tracerCanvas").addEventListener("pointermove", function(ev){
+  if(!dragCtrl || !curRec) return;
+  curRec.tracer.ctrl=canvasPoint(ev); persistTracer(); drawTracer();
+});
+$("tracerCanvas").addEventListener("pointerup", function(){ dragCtrl=false; });
+window.addEventListener("resize", function(){ if($("view-video").classList.contains("on")){ sizeCanvas(); drawTracer(); } });
 $("termsCheck").onchange=function(){ $("agreeBtn").disabled = !$("termsCheck").checked; };
 $("agreeBtn").onclick=function(){ state.termsAccepted=true; save(); $("termsGate").style.display="none"; };
 /* Email us link (Help §11) */
