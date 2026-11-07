@@ -39,6 +39,12 @@ th{background:#e8f2e9}
 #termsGate .card{max-width:560px;width:100%}
 footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
 .kv{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed var(--line)}
+.holechip{display:inline-block;min-width:34px;text-align:center;padding:6px 8px;margin:0 4px 6px 0;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--mut);font-weight:700}
+.holechip.on{background:var(--green2);color:#fff;border-color:var(--green2)}
+#saveHoleBtn{min-height:64px}
+#saveHoleBtn.saved{background:#e8f2e9;color:var(--green);border:2px solid var(--green2)}
+#saveToast{position:fixed;left:50%;transform:translateX(-50%);bottom:84px;background:var(--green);color:#fff;padding:12px 22px;border-radius:999px;font-weight:800;font-size:18px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:40;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:nowrap}
+#saveToast.show{opacity:1}
 </style>
 </head>
 <body>
@@ -101,7 +107,10 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
 
     <div class="card">
       <h3 style="margin-top:0">Scores — Hole <span id="scoreHoleNum">1</span></h3>
+      <div id="savedStrip" aria-label="Which holes are saved"></div>
+      <p class="note" id="savedLine" style="margin-top:0"></p>
       <div id="playerRows"></div>
+      <button id="saveHoleBtn" class="primary big" style="margin-top:10px">✓ Save Hole 1</button>
       <button id="finishRoundBtn" class="primary big" style="margin-top:10px">Finish round &amp; save</button>
     </div>
   </section>
@@ -134,6 +143,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
     <div class="card">
       <h3 style="margin-top:0">Help</h3>
       <p><b>Keep score:</b> Pick your course, then on each hole use the big − / + buttons for each player, or tap the 🎤 mic and just say the number (one tap, then speak). Totals vs par update on the Card tab.</p>
+      <p><b>Saving:</b> Every score, drive, and pin saves to this device the moment you enter it — nothing is lost if you close the app. When a hole is done, tap the big <b>“✓ Save Hole”</b> button: it turns into “Hole saved ✓”, the hole number fills in green in the saved row, and the hole gets a ✓ on the scorecard, so you can see at a glance which holes are recorded. Walking to the next hole saves the one you just left, too. If you change anything on a saved hole, the button flips back to “Save Hole” so you know to tap it again.</p>
       <p><b>Drive / shot distance:</b> On the tee, tap “Mark tee”. Walk to your ball and tap “Mark ball”. PinTally shows the yards between the two spots and saves it as that hole's drive on the scorecard.</p>
       <p><b>Yards to the pin:</b> The first time you reach a green, stand by the flag and tap “Set pin here”. From then on, that hole shows your live yards to the pin. Pins are saved on your device per course, so they are still there next round. GPS needs location permission and open sky; accuracy is usually about 5–10 yards.</p>
       <p><b>Quail Ridge (Grove, OK):</b> Built in from its published scorecard — 9 holes, par 36, Blue tees 3,023 yards. Playing 18? Choose “Quail Ridge — 18 (play the 9 twice)” and the same 9 repeat as holes 10–18. No published green GPS exists for Quail Ridge, so set each pin once with “Set pin here”.</p>
@@ -146,6 +156,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
   </section>
   <footer>PinTally <span id="verFoot"></span> · White Wolf Apps · Works offline, no account</footer>
 </main>
+<div id="saveToast" role="status"></div>
 <nav class="tabs">
   <button data-view="play" class="on">⛳ Play</button>
   <button data-view="card">🗂️ Card</button>
@@ -154,7 +165,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
 </nav>
 <script>
 "use strict";
-var VERSION = "v1.0";
+var VERSION = "v1.1";
 var STORE_KEY = "pintally_v1";
 
 /* Quail Ridge Golf and Event Venue, 519 Quail Run Rd, Grove, OK.
@@ -192,6 +203,7 @@ function defaultState(){
     drives:{}, /* hole -> yards (phone holder's drive/shot) */
     marks:{}, /* hole -> {tee:{lat,lng}, ball:{lat,lng}} */
     pins:{}, /* courseId -> {hole:{lat,lng}} */
+    savedHoles:{}, /* hole -> true once that hole is confirmed saved (Save button or moving on) */
     history:[]
   };
 }
@@ -252,8 +264,27 @@ function renderPlayers(){
   cnt.value=state.playerCount;
   cnt.onchange=function(){ state.playerCount=parseInt(cnt.value,10); save(); renderPlayers(); renderCard(); };
   names.appendChild(cnt);
+  renderSaveUI();
 }
-function setScore(i, val){ var key=i+"-"+state.currentHole; if(val<=0) delete state.scores[key]; else state.scores[key]=val; save(); renderPlayers(); renderCard(); }
+function setScore(i, val){ var key=i+"-"+state.currentHole; if(val<=0) delete state.scores[key]; else state.scores[key]=val; touchHole(state.currentHole); save(); renderPlayers(); renderCard(); }
+
+/* Saved-hole tracking: every change still auto-saves to localStorage instantly;
+   savedHoles is the visible "this hole is recorded" checkmark Travis asked for. */
+function holeHasData(h){ for(var i=0;i<state.playerCount;i++){ if(state.scores[i+"-"+h]) return true; } return !!state.drives[h]; }
+function touchHole(h){ if(state.savedHoles[h]) delete state.savedHoles[h]; }
+var toastTimer=null;
+function flashSaved(msg){ var t=$("saveToast"); if(!t) return; t.textContent=msg; t.classList.add("show"); if(toastTimer) clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove("show"); },1800); }
+function markHoleSaved(h){ state.savedHoles[h]=true; save(); }
+function renderSaveUI(){
+  var btn=$("saveHoleBtn"); if(!btn) return;
+  var h=state.currentHole, c=course(), saved=!!state.savedHoles[h];
+  btn.textContent = saved ? ("Hole "+h+" saved ✓") : ("✓ Save Hole "+h);
+  btn.classList.toggle("saved", saved);
+  var html=""; for(var n=1;n<=c.holes;n++){ var on=!!state.savedHoles[n]; html+='<span class="holechip'+(on?" on":"")+'">'+n+(on?" ✓":"")+'</span>'; }
+  $("savedStrip").innerHTML=html;
+  var cnt=0, list=[]; for(var k=1;k<=c.holes;k++){ if(state.savedHoles[k]){ cnt++; list.push(k); } }
+  $("savedLine").textContent = cnt ? ("Holes saved: "+list.join(", ")+" ✓ — "+cnt+" of "+c.holes) : "Scores save automatically as you go. Tap ✓ Save Hole when a hole is done so it gets its checkmark.";
+}
 
 function renderHole(){
   var c=course(), h=state.currentHole;
@@ -294,7 +325,7 @@ function totalsFor(i){
 }
 function renderCard(){
   var c=course(), t=$("cardTable"); var html="<tr><th>Hole</th>";
-  for(var h=1;h<=c.holes;h++) html+="<th>"+h+"</th>"; html+="<th>Out</th>"+(c.holes>9?"<th>In</th>":"")+"<th>Total</th></tr>";
+  for(var h=1;h<=c.holes;h++) html+="<th>"+h+(state.savedHoles[h]?" ✓":"")+"</th>"; html+="<th>Out</th>"+(c.holes>9?"<th>In</th>":"")+"<th>Total</th></tr>";
   html+="<tr><th>Par</th>"; var po=0,pb=0; for(var h2=1;h2<=c.holes;h2++){ html+="<td>"+c.pars[h2-1]+"</td>"; if(h2<=9)po+=c.pars[h2-1]; else pb+=c.pars[h2-1]; }
   html+="<td><b>"+po+"</b></td>"+(c.holes>9?"<td><b>"+pb+"</b></td>":"")+"<td><b>"+(po+pb)+"</b></td></tr>";
   html+="<tr><th>Yards</th>"; var yo=0,yb=0; for(var h3=1;h3<=c.holes;h3++){ html+="<td>"+(c.yards[h3-1]||"–")+"</td>"; if(h3<=9)yo+=c.yards[h3-1]||0; else yb+=c.yards[h3-1]||0; }
@@ -309,6 +340,8 @@ function renderCard(){
   var box=$("totalsBox"); var out="";
   for(var k=0;k<state.playerCount;k++){ var z=totalsFor(k);
     out+='<div class="kv"><span>'+esc(state.players[k])+'</span><span>'+(z.played? ("Front "+(z.front||"–")+" ("+fmtVsPar(z.frontVs)+")"+(course().holes>9? " · Back "+(z.back||"–")+" ("+fmtVsPar(z.backVs)+")":"")+" · <b>Total "+z.total+" ("+fmtVsPar(z.vs)+")</b>") : "No scores yet")+'</span></div>'; }
+  var savedList=[]; for(var s2=1;s2<=c.holes;s2++){ if(state.savedHoles[s2]) savedList.push(s2); }
+  out+='<div class="kv"><span>Holes saved ✓</span><span>'+(savedList.length? savedList.join(", "):"None yet")+'</span></div>';
   box.innerHTML=out;
 }
 function renderHistory(){
@@ -354,21 +387,31 @@ function voiceText(inp, btn){
 function showView(name){ document.querySelectorAll(".view").forEach(function(v){ v.classList.remove("on"); }); $("view-"+name).classList.add("on");
   document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-view")===name); }); }
 document.querySelectorAll("nav.tabs button").forEach(function(b){ b.onclick=function(){ showView(b.getAttribute("data-view")); }; });
-$("courseSel").onchange=function(){ state.courseId=$("courseSel").value; state.currentHole=1; save(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); };
-$("newRoundBtn").onclick=function(){ if(confirm("Start a new round? Current unsaved scores on this card will be cleared.")){ state.scores={}; state.drives={}; state.marks={}; state.currentHole=1; save(); renderHole(); renderPlayers(); renderCard(); } };
-$("prevHoleBtn").onclick=function(){ if(state.currentHole>1){ state.currentHole--; save(); renderHole(); renderPlayers(); } };
-$("nextHoleBtn").onclick=function(){ if(state.currentHole<course().holes){ state.currentHole++; save(); renderHole(); renderPlayers(); } };
-$("parInput").onchange=function(){ var v=parseInt($("parInput").value,10); if(v>=3&&v<=6) setCustomField("pars", state.currentHole-1, v); renderPlayers(); renderCard(); };
-$("yardsInput").onchange=function(){ var v=parseInt($("yardsInput").value,10); if(!isNaN(v)&&v>=0&&v<=700) setCustomField("yards", state.currentHole-1, v); renderCard(); };
-$("setPinBtn").onclick=function(){ getPos(function(pos){ if(!state.pins[state.courseId]) state.pins[state.courseId]={}; state.pins[state.courseId][state.currentHole]=pos; save(); $("pinStatus").textContent="Pin saved for hole "+state.currentHole+"."; updateDistToPin(); }, function(msg){ $("pinStatus").textContent=msg; }); };
-$("clearPinBtn").onclick=function(){ if(state.pins[state.courseId]) delete state.pins[state.courseId][state.currentHole]; save(); $("distToPin").textContent="—"; renderPin(); };
+$("courseSel").onchange=function(){ state.courseId=$("courseSel").value; state.currentHole=1; state.savedHoles={}; save(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); };
+$("newRoundBtn").onclick=function(){ if(confirm("Start a new round? Current scores on this card will be cleared.")){ state.scores={}; state.drives={}; state.marks={}; state.savedHoles={}; state.currentHole=1; save(); renderHole(); renderPlayers(); renderCard(); } };
+function leaveHole(dest){ /* moving off a hole auto-saves it (checkmark) and says so */
+  var leaving=state.currentHole, auto=false;
+  if(holeHasData(leaving) && !state.savedHoles[leaving]){ markHoleSaved(leaving); auto=true; }
+  if(dest>=1 && dest<=course().holes) state.currentHole=dest;
+  save(); renderHole(); renderPlayers(); renderCard();
+  if(auto) flashSaved("Hole "+leaving+" saved ✓");
+}
+$("prevHoleBtn").onclick=function(){ if(state.currentHole>1) leaveHole(state.currentHole-1); };
+$("nextHoleBtn").onclick=function(){ if(state.currentHole<course().holes) leaveHole(state.currentHole+1); else leaveHole(state.currentHole); };
+$("saveHoleBtn").onclick=function(){ var h=state.currentHole;
+  if(!holeHasData(h)){ flashSaved("Nothing on hole "+h+" yet — enter a score first"); return; }
+  markHoleSaved(h); renderSaveUI(); renderCard(); flashSaved("Hole "+h+" saved ✓"); };
+$("parInput").onchange=function(){ var v=parseInt($("parInput").value,10); if(v>=3&&v<=6){ setCustomField("pars", state.currentHole-1, v); touchHole(state.currentHole); save(); } renderPlayers(); renderCard(); };
+$("yardsInput").onchange=function(){ var v=parseInt($("yardsInput").value,10); if(!isNaN(v)&&v>=0&&v<=700){ setCustomField("yards", state.currentHole-1, v); touchHole(state.currentHole); save(); } renderSaveUI(); renderCard(); };
+$("setPinBtn").onclick=function(){ getPos(function(pos){ if(!state.pins[state.courseId]) state.pins[state.courseId]={}; state.pins[state.courseId][state.currentHole]=pos; touchHole(state.currentHole); save(); renderSaveUI(); $("pinStatus").textContent="Pin saved for hole "+state.currentHole+"."; updateDistToPin(); }, function(msg){ $("pinStatus").textContent=msg; }); };
+$("clearPinBtn").onclick=function(){ if(state.pins[state.courseId]) delete state.pins[state.courseId][state.currentHole]; touchHole(state.currentHole); save(); renderSaveUI(); $("distToPin").textContent="—"; renderPin(); };
 $("refreshDistBtn").onclick=function(){ updateDistToPin(); };
-$("markTeeBtn").onclick=function(){ getPos(function(pos){ var h=state.currentHole; if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; delete state.marks[h].ball; save(); renderShot(); }, function(msg){ $("shotStatus").textContent=msg; }); };
-$("markBallBtn").onclick=function(){ var h=state.currentHole, m=state.marks[h]; if(!m||!m.tee){ $("shotStatus").textContent="Mark the tee first, then mark the ball."; return; } getPos(function(pos){ m.ball=pos; state.drives[h]=Math.round(haversineYards(m.tee,pos)); save(); renderShot(); renderCard(); }, function(msg){ $("shotStatus").textContent=msg; }); };
-$("clearShotBtn").onclick=function(){ var h=state.currentHole; delete state.marks[h]; delete state.drives[h]; save(); renderShot(); renderCard(); };
+$("markTeeBtn").onclick=function(){ getPos(function(pos){ var h=state.currentHole; if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; delete state.marks[h].ball; touchHole(h); save(); renderShot(); renderSaveUI(); }, function(msg){ $("shotStatus").textContent=msg; }); };
+$("markBallBtn").onclick=function(){ var h=state.currentHole, m=state.marks[h]; if(!m||!m.tee){ $("shotStatus").textContent="Mark the tee first, then mark the ball."; return; } getPos(function(pos){ m.ball=pos; state.drives[h]=Math.round(haversineYards(m.tee,pos)); touchHole(h); save(); renderShot(); renderCard(); }, function(msg){ $("shotStatus").textContent=msg; }); };
+$("clearShotBtn").onclick=function(){ var h=state.currentHole; delete state.marks[h]; delete state.drives[h]; touchHole(h); save(); renderShot(); renderSaveUI(); renderCard(); };
 $("finishRoundBtn").onclick=function(){ var c=course(); var parts=[]; for(var i=0;i<state.playerCount;i++){ var z=totalsFor(i); if(z.played) parts.push(state.players[i]+" "+z.total+" ("+fmtVsPar(z.vs)+")"); }
   if(!parts.length){ alert("Enter at least one score before finishing the round."); return; }
-  state.history.push({date:new Date().toLocaleString(), courseName:c.name, summary:parts.join(" · ")}); state.scores={}; state.drives={}; state.marks={}; state.currentHole=1; save(); renderHole(); renderPlayers(); renderCard(); renderHistory(); showView("history"); };
+  state.history.push({date:new Date().toLocaleString(), courseName:c.name, summary:parts.join(" · ")}); state.scores={}; state.drives={}; state.marks={}; state.savedHoles={}; state.currentHole=1; save(); renderHole(); renderPlayers(); renderCard(); renderHistory(); showView("history"); };
 $("clearDemoBtn").onclick=function(){ if(confirm("Clear sample data? This clears the current card and saved rounds on this device.")){ var keepPins=state.pins; state=Object.assign(defaultState(),{termsAccepted:true, pins:keepPins}); save(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory(); } };
 $("termsCheck").onchange=function(){ $("agreeBtn").disabled = !$("termsCheck").checked; };
 $("agreeBtn").onclick=function(){ state.termsAccepted=true; save(); $("termsGate").style.display="none"; };
