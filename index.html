@@ -655,7 +655,7 @@ footer{color:#c8d4c2}
 </nav>
 <script>
 "use strict";
-var VERSION = "v1.7";
+var VERSION = "v1.7.1";
 var STORE_KEY = "pintally_v1";
 
 /* Quail Ridge Golf and Event Venue, 519 Quail Run Rd, Grove, OK.
@@ -1926,6 +1926,22 @@ function onRecStop(){
   if(!blob.size){ $("filmStatus").textContent="That recording came out empty — try filming again."; return; }
   storeVideo(blob, recHole, "Recorded");
 }
+/* v1.7.1: imported files are validated BEFORE anything is stored — a file that
+   doesn't actually decode as a video (corrupt, or a renamed non-video) must
+   never mint a videoRefs entry the user would trust. Resolves true only when a
+   detached <video> loads metadata with a nonzero duration (Infinity counts:
+   browser-recorded WebM reports it until seeked); error or a 6s stall = false. */
+function validateVideoFile(blob){
+  return new Promise(function(res){
+    var url=null, done=false, vid=document.createElement("video");
+    function finish(ok){ if(done) return; done=true; try{ vid.removeAttribute("src"); vid.load(); }catch(e){} if(url){ try{ URL.revokeObjectURL(url); }catch(e){} } res(ok); }
+    vid.preload="metadata"; vid.muted=true;
+    vid.onloadedmetadata=function(){ finish(typeof vid.duration==="number" && vid.duration>0); };
+    vid.onerror=function(){ finish(false); };
+    setTimeout(function(){ finish(false); }, 6000);
+    try{ url=URL.createObjectURL(blob); vid.src=url; }catch(e){ finish(false); }
+  });
+}
 function storeVideo(blob, hole, how){
   var oldId=state.videoRefs[hole] || null;
   var rec={id:"v"+Date.now(), hole:hole, courseId:state.courseId, ts:Date.now(), blob:blob,
@@ -2211,7 +2227,13 @@ $("saveHoleBtn").onclick=function(){ var h=state.currentHole;
   flashSaved("Hole "+h+" saved ✓");
   if(h<course().holes){ setTimeout(function(){ if(state.currentHole===h) leaveHole(h+1); }, 900); } };
 $("celebrate").onclick=function(){ this.className=""; if(celebTimer) clearTimeout(celebTimer); };
-$("parInput").onchange=function(){ var v=parseInt($("parInput").value,10); if(v>=3&&v<=6){ setCustomField("pars", state.currentHole-1, v); touchHole(state.currentHole); save(); } renderHoleMeta(); renderSticky(); renderPlayers(); renderCard(); renderMapCard(); };
+$("parInput").onchange=function(){ var raw=($("parInput").value||"").trim(); var cur=course().pars[state.currentHole-1]; var v=/^-?\d+$/.test(raw)? parseInt(raw,10) : NaN;
+  /* v1.7.1: par is a whole number — a decimal like 3.7 used to be silently truncated to 3
+     by parseInt. Now any non-integer or out-of-range entry is rejected with a visible note
+     and the field is reset to the par already in effect. */
+  if(!isNaN(v)&&v>=3&&v<=6){ setCustomField("pars", state.currentHole-1, v); touchHole(state.currentHole); save(); }
+  else { $("parInput").value=cur; flashSaved(isNaN(v)? "Par is a whole number from 3 to 6 — kept par "+cur+"." : "Par has to be 3, 4, 5 or 6 — kept par "+cur+"."); }
+  renderHoleMeta(); renderSticky(); renderPlayers(); renderCard(); renderMapCard(); };
 $("yardsInput").onchange=function(){ var v=parseInt($("yardsInput").value,10); if(!isNaN(v)&&v>=0&&v<=700){ setCustomField("yards", state.currentHole-1, v); if(state.gpsYards[state.courseId]) delete state.gpsYards[state.courseId][courseHole(state.currentHole)]; touchHole(state.currentHole); save(); } renderHoleMeta(); renderSaveUI(); renderCard(); renderMapCard(); renderHoleMap(); };
 $("setPinBtn").onclick=function(){ getPos(function(pos){ savePin(state.currentHole, pos); applyMappedYardage(state.currentHole); touchHole(state.currentHole); save(); renderSaveUI(); renderMapCard(); renderCourseSel(); $("pinStatus").textContent="Pin saved for hole "+state.currentHole+"."; renderHoleMap(); updateDistToPin(); }, function(msg){ $("pinStatus").textContent=msg; }); };
 $("clearPinBtn").onclick=function(){ clearPin(state.currentHole); touchHole(state.currentHole); save(); renderSaveUI(); $("distToPin").textContent="—"; renderPin(); renderMapCard(); renderHoleMap(); };
@@ -2356,7 +2378,14 @@ $("clearDemoBtn").onclick=function(){ if(confirm("Clear sample data? This clears
 $("filmBtn").onclick=function(){ startRecording(); };
 $("stopRecBtn").onclick=function(){ stopRecording(); };
 $("watchReplayBtn").onclick=function(){ var id=state.videoRefs[state.currentHole]; if(id) openReplay(id, state.currentHole, null, "play"); };
-$("videoFile").onchange=function(){ var f=$("videoFile").files[0]; if(!f) return; storeVideo(f, state.currentHole, "Added from your gallery"); $("videoFile").value=""; };
+$("videoFile").onchange=function(){ var f=$("videoFile").files[0]; if(!f) return; var hole=state.currentHole; $("videoFile").value="";
+  /* v1.7.1: check the file really is a playable video before saving anything. */
+  $("filmStatus").textContent="Checking that video…";
+  validateVideoFile(f).then(function(ok){
+    if(ok){ storeVideo(f, hole, "Added from your gallery"); }
+    else { $("filmStatus").textContent="That file couldn't be read as a video — nothing was saved."; }
+  });
+};
 $("playPauseBtn").onclick=function(){ var vid=$("replayVideo"); if(vid.paused) vid.play(); else vid.pause(); };
 $("replayVideo").addEventListener("play", function(){ $("playPauseBtn").textContent="⏸ Pause"; });
 $("replayVideo").addEventListener("pause", function(){ $("playPauseBtn").textContent="▶ Play"; });
