@@ -60,6 +60,88 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding:10px}
 input[type=range]{width:100%;min-height:48px;accent-color:var(--green2)}
 input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
 .vidchip{min-height:52px;margin:6px 6px 0 0;font-weight:700}
+/* ===== PinTally v1.5: visual polish (sunlight-first) + tour + mapping + profile ===== */
+:root{--green:#0b3d24;--green2:#17663a;--green3:#0e5230;--bg:#eaf2ea;--card:#ffffff;--ink:#101f16;--mut:#44554a;--line:#b9cdbd;--gold:#e9a319;--goldsoft:#fff1cf;--shadow:0 10px 26px rgba(11,61,36,.13)}
+body{line-height:1.45;background:linear-gradient(180deg,#dcecdf 0,#eef5ee 240px,#eaf2ea 100%);color:var(--ink)}
+header{background:linear-gradient(135deg,#07291a 0%,#0b3d24 55%,#17663a 100%);border-bottom:4px solid var(--gold);box-shadow:0 4px 16px rgba(7,41,26,.35);padding-right:132px}
+header h1{font-size:23px;font-weight:900;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+header p{font-size:13px;font-weight:650;opacity:.95;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#headerProfile{position:absolute;right:12px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:7px;max-width:118px;color:#fff;font-weight:800;font-size:13px}
+#headerProfileName{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+.avatar{border-radius:50%;object-fit:cover;flex:none;background:var(--goldsoft);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.avatar-fallback{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--gold);color:#231600;font-weight:900;flex:none;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.card{border:1.5px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:14px}
+.card h3,.card h4{color:var(--green);font-weight:900}
+button{border:1.5px solid #9db8a4;font-weight:700;box-shadow:0 2px 6px rgba(11,61,36,.10);transition:transform .05s ease,background .15s ease}
+button.primary{background:linear-gradient(180deg,#1c7a43,#0e5230);border-color:#0b3d24;color:#fff;font-weight:850}
+button.accent{background:linear-gradient(180deg,#f6b62b,#e9a319);border-color:#9a6a06;color:#231600;font-weight:900}
+button:active{transform:scale(.97)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button:disabled{opacity:.45;box-shadow:none}
+input[type=text],input[type=number],select{border:1.5px solid #9db8a4;color:var(--ink);font-weight:600;background:#fff}
+label{color:var(--green);font-weight:800}
+.note{color:var(--mut)}
+.sub{color:var(--mut);font-weight:600}
+.stepper button{border-width:2px;box-shadow:0 4px 10px rgba(11,61,36,.18)}
+.stepper .step-minus{background:#fff;color:var(--green);border-color:var(--green2)}
+.stepper .step-plus{background:linear-gradient(180deg,#1c7a43,#0e5230);color:#fff;border-color:#0b3d24}
+.stepper .val{font-size:38px;font-weight:900;color:var(--green)}
+.mic{background:var(--goldsoft);border-color:#c98f0e;color:#5c3d00}
+.quickrow button{background:#f2f7f2;border:1.5px solid #9db8a4;color:var(--green);font-size:19px}
+.quickrow button.selected{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 3px 8px rgba(11,61,36,.3)}
+.player-card{background:linear-gradient(180deg,#ffffff,#f3f8f3)!important;border:1.5px solid var(--line);border-radius:16px;box-shadow:0 4px 12px rgba(11,61,36,.08)}
+#stickyHole{background:linear-gradient(90deg,#0b3d24,#17663a);border-left:7px solid var(--gold);box-shadow:0 4px 12px rgba(11,61,36,.3);font-weight:900}
+.holechip{border:1.5px solid #9db8a4;color:var(--mut);background:#fff}
+.holechip.on{background:linear-gradient(180deg,#1c7a43,#0e5230);color:#fff;border-color:#0b3d24}
+#saveHoleBtn{font-weight:900;letter-spacing:.2px}
+#saveHoleBtn.saved{background:#e2f3e4;color:var(--green);border:3px solid var(--green2);box-shadow:0 4px 12px rgba(11,61,36,.2)}
+.bigdist{color:var(--green);text-shadow:0 1px 0 #fff}
+#holeMeta{font-weight:900;color:var(--green)}
+table th{background:var(--green);color:#fff;font-weight:850}
+table td,table th{padding:7px 4px;border-color:#c3d4c6}
+table tr:nth-child(even) td{background:#eef5ee}
+.kv{font-weight:600}
+.kv b{color:var(--green)}
+nav.tabs{box-shadow:0 -4px 16px rgba(11,61,36,.16);border-top:2px solid var(--line)}
+nav.tabs button{color:#3d5546;font-size:15.5px;box-shadow:none;border-radius:0}
+nav.tabs button.on{background:linear-gradient(180deg,#17663a,#0b3d24);color:#fff;box-shadow:inset 0 4px 0 var(--gold)}
+.pill{display:inline-flex;align-items:center;gap:4px;background:var(--green);color:#fff;border-radius:999px;padding:5px 11px;font-size:13.5px;font-weight:850;white-space:nowrap}
+.pill.gold{background:var(--gold);color:#231600}
+.pill.light{background:#e2f3e4;color:var(--green);border:1.5px solid var(--green2)}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.status-box{border:1.5px solid var(--line);border-radius:14px;padding:10px;background:#f3f8f3;font-weight:750}
+.status-box .st-big{font-size:19px;font-weight:900;color:var(--green)}
+.map-hole-list{margin-top:10px;border-top:1.5px dashed var(--line)}
+.map-hole-row{display:flex;justify-content:space-between;gap:8px;padding:7px 2px;border-bottom:1px solid #e1ebe2;font-weight:600;font-size:15.5px}
+.map-create{margin-top:14px;border-top:1.5px dashed var(--line);padding-top:6px}
+.profile-mini{display:flex;align-items:center;gap:10px;font-weight:850;color:var(--green);margin:8px 0}
+.social-links a{color:var(--green2);font-weight:800}
+/* First-run profile gate */
+#profileGate{position:fixed;inset:0;background:rgba(7,30,18,.94);z-index:60;display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:16px}
+#profileGate.on{display:flex}
+#profileGate .card{max-width:560px;width:100%}
+.profile-photo-row{display:flex;align-items:center;gap:14px;margin:8px 0}
+.profile-photo-big{width:88px;height:88px;font-size:38px}
+/* First-open tour */
+#tourOverlay{position:fixed;inset:0;z-index:70;display:none;background:linear-gradient(160deg,#07291a,#0b3d24 60%,#17663a);padding:14px;overflow:hidden}
+#tourOverlay.on{display:flex;align-items:center;justify-content:center}
+.tour-panel{background:#fff;border-radius:24px;max-width:620px;width:100%;max-height:calc(100vh - 28px);display:flex;flex-direction:column;overflow:hidden;box-shadow:0 22px 50px rgba(0,0,0,.45)}
+.tour-viewport{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tour-viewport::-webkit-scrollbar{display:none}
+.tour-slide{flex:0 0 100%;scroll-snap-align:start;padding:26px 24px 14px;text-align:center}
+.tour-icon{width:94px;height:94px;margin:0 auto 12px;border-radius:50%;background:var(--goldsoft);border:2.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:50px;box-shadow:0 6px 16px rgba(233,163,25,.35)}
+.tour-slide h2{font-size:29px;line-height:1.15;margin:4px 0 8px;color:var(--green);font-weight:900}
+.tour-slide p{font-size:19px;line-height:1.45;color:#24382c;margin:0 auto;max-width:420px;font-weight:600}
+.tour-controls{border-top:1.5px solid var(--line);padding:12px 14px 14px;background:#fbfdfb}
+.tour-dots{display:flex;justify-content:center;gap:7px;margin-bottom:12px}
+.tour-dot{width:10px;height:10px;border-radius:999px;background:#c3d4c6;transition:all .2s}
+.tour-dot.on{width:28px;background:var(--gold)}
+.tour-btnrow{display:flex;gap:8px;align-items:center}
+.tour-btnrow button{min-height:56px}
+#tourSkipBtn{flex:0 0 auto}
+#tourBackBtn{flex:1}
+#tourNextBtn{flex:1.4}
+@media (max-width:420px){.tour-slide{min-height:308px}.tour-slide h2{font-size:26px}.tour-slide p{font-size:18px}}
 </style>
 </head>
 <body>
@@ -73,7 +155,58 @@ input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
   </div>
 </div>
 
-<header><h1>⛳ PinTally</h1><p id="hdrSub">Score · Drive distance · Yards to the pin</p></header>
+<div id="profileGate" role="dialog" aria-label="Create your golfer profile">
+  <div class="card">
+    <h2 style="margin-top:0;color:var(--green)">Create your golfer profile</h2>
+    <p style="font-weight:600">This is who you are in PinTally. It saves on this phone.</p>
+    <div class="profile-photo-row">
+      <img id="gateAvatar" class="avatar profile-photo-big" style="display:none" alt="Your profile photo preview">
+      <span id="gateAvatarFallback" class="avatar-fallback profile-photo-big">⛳</span>
+      <div>
+        <label for="gatePhotoInput" style="margin-top:0">Profile photo <span class="note">(optional)</span></label>
+        <input type="file" id="gatePhotoInput" accept="image/*">
+        <button id="gateRemovePhotoBtn" type="button" style="display:none;margin-top:6px">Remove photo</button>
+      </div>
+    </div>
+    <label for="gateNameInput">Golfer name <span class="badge">required</span></label>
+    <div class="row">
+      <input type="text" id="gateNameInput" maxlength="30" placeholder="Your name" autocomplete="name">
+      <button id="gateNameMic" class="mic" style="flex:none" aria-label="Say your golfer name">🎤</button>
+    </div>
+    <label for="gateInstaInput">Instagram handle <span class="note">(optional)</span></label>
+    <input type="text" id="gateInstaInput" maxlength="40" placeholder="@yourhandle">
+    <label for="gateFbInput">Facebook <span class="note">(optional — profile name or full link)</span></label>
+    <input type="text" id="gateFbInput" maxlength="120" placeholder="facebook.com/you or your profile name">
+    <p class="note">Your profile lives on this phone only — PinTally has no accounts yet.</p>
+    <button id="gateSaveProfileBtn" class="primary big" disabled>Save profile &amp; start</button>
+  </div>
+</div>
+
+<div id="tourOverlay" role="dialog" aria-label="Welcome tour">
+  <div class="tour-panel">
+    <div class="tour-viewport" id="tourViewport">
+      <section class="tour-slide"><div class="tour-icon">⛳</div><h2>Welcome to PinTally</h2><p>PinTally keeps your score, measures your shots, and remembers your courses — right on your phone.</p></section>
+      <section class="tour-slide"><div class="tour-icon">🔢</div><h2>Scoring comes first</h2><p>Your score sits at the top of the Play screen. Tap the numbers or use your voice. When a hole shows “saved ✓”, it's saved.</p></section>
+      <section class="tour-slide"><div class="tour-icon">📍</div><h2>Measure my shot</h2><p>Tap where you hit from, walk to your ball, tap again. That's your drive distance — no guessing.</p></section>
+      <section class="tour-slide"><div class="tour-icon">🚩</div><h2>Yards to the pin</h2><p>Stand at the hole once and tap “I'm at the hole”. The app remembers it forever and shows your yards to the pin.</p></section>
+      <section class="tour-slide"><div class="tour-icon">🗺️</div><h2>Map any course yourself</h2><p>Course not in the app? As you play, tap where each tee and hole is. PinTally keeps your map on your phone.</p></section>
+      <section class="tour-slide"><div class="tour-icon">🎥</div><h2>Swing video</h2><p>Record your swing, watch the instant replay in slow motion, and draw the ball's flight right on the video.</p></section>
+      <section class="tour-slide"><div class="tour-icon">📚</div><h2>Past games</h2><p>Every round you finish is saved. Look back any time and see exactly how you did.</p></section>
+      <section class="tour-slide"><div class="tour-icon">🔎</div><h2>Find courses</h2><p>Find courses near you or search by name — all across the US. Quail Ridge in Grove is built in, ready to play.</p></section>
+      <section class="tour-slide"><div class="tour-icon">🔒</div><h2>Your stuff stays on your phone</h2><p>No account, nothing uploaded. PinTally works offline — your rounds, maps, and videos live on this phone.</p></section>
+    </div>
+    <div class="tour-controls">
+      <div class="tour-dots" id="tourDots" aria-hidden="true"></div>
+      <div class="tour-btnrow">
+        <button id="tourSkipBtn" type="button">Skip</button>
+        <button id="tourBackBtn" type="button">◀ Back</button>
+        <button id="tourNextBtn" type="button" class="primary">Next ▶</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header><h1>⛳ PinTally</h1><p id="hdrSub">Score · Drive distance · Yards to the pin</p><div id="headerProfile" aria-label="Your golfer profile"><img id="headerAvatar" class="avatar" width="34" height="34" style="width:34px;height:34px;display:none" alt=""><span id="headerAvatarFallback" class="avatar-fallback" style="width:34px;height:34px;font-size:16px">⛳</span><span id="headerProfileName"></span></div></header>
 <main>
   <!-- PLAY VIEW -->
   <section id="view-play" class="view on">
@@ -93,6 +226,23 @@ input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
       <button id="saveHoleBtn" class="primary big" style="margin-top:10px">✓ Save Hole 1</button>
       <button id="nextHoleBtn2" class="big" style="margin-top:8px">Next hole ▶</button>
       <button id="finishRoundBtn" class="primary big" style="margin-top:10px">Finish round &amp; save</button>
+    </div>
+
+    <div class="card" id="mapCard" style="display:none">
+      <div class="row" style="align-items:center">
+        <h3 style="margin:0">🗺️ Map this hole</h3>
+        <span id="mapProgressPill" class="pill gold" style="flex:none">Mapped: 0 of 9 holes</span>
+      </div>
+      <p class="note" style="margin-bottom:0">Playing a course that isn't in the app? You're standing at every tee and every hole anyway — tap these as you play and PinTally keeps the map on this phone, for good.</p>
+      <div class="status-grid">
+        <div class="status-box">TEE<br><span class="st-big" id="mapTeeStatus">Not set</span></div>
+        <div class="status-box">HOLE (PIN)<br><span class="st-big" id="mapPinStatus">Not set</span></div>
+      </div>
+      <p id="mapYardageLine" style="font-weight:800;color:var(--green);margin:6px 0"></p>
+      <button id="mapTeeBtn" class="primary big">📍 I'm at the tee</button>
+      <button id="mapPinBtn" class="primary big" style="margin-top:8px">📍 I'm at the hole</button>
+      <button id="parSuggestBtn" class="accent big" style="margin-top:8px;display:none"></button>
+      <div class="map-hole-list" id="mapHoleList" aria-label="Hole by hole mapping progress"></div>
     </div>
 
     <div class="card" id="measureCard">
@@ -162,6 +312,17 @@ input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
         <button id="newRoundBtn">New round</button>
       </div>
       <p class="note" id="courseNote"></p>
+      <div class="map-create">
+        <h4 style="margin-bottom:4px">🗺️ Map a course yourself</h4>
+        <p class="note" style="margin-top:0">Can't find your course? Start it here, then tap “I'm at the tee” and “I'm at the hole” as you play each hole — the app builds the map and remembers it.</p>
+        <label for="mapNameInput">Course name</label>
+        <input type="text" id="mapNameInput" maxlength="60" placeholder="e.g. Hidden Pines Golf Club">
+        <label for="mapTownInput">Town <span class="note">(optional)</span></label>
+        <input type="text" id="mapTownInput" maxlength="40" placeholder="e.g. Grove, OK">
+        <label for="mapHolesSel">Holes</label>
+        <select id="mapHolesSel"><option value="9">9 holes</option><option value="18">18 holes</option></select>
+        <button id="mapCreateBtn" class="primary big" style="margin-top:10px">＋ Map a course yourself</button>
+      </div>
       <h4 style="margin-bottom:4px">Find a course</h4>
       <p class="note" style="margin-top:0">Playing somewhere new? Pull up the course you're at. Scorecard details for most courses aren't published in one place — pars and yardages are editable; your home courses can be built in exactly.</p>
       <button id="findNearBtn" class="primary big">📍 Find courses near me</button>
@@ -172,6 +333,10 @@ input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
       </div>
       <button id="findSearchBtn" class="big" style="margin-top:8px;width:100%">Search courses</button>
       <p class="note" id="findStatus"></p>
+      <div id="findFallback" style="display:none">
+        <button id="findAreaBtn" class="primary big">Search courses near that town instead</button>
+        <button id="findMapBtn" class="accent big" style="margin-top:8px">🗺️ Map it yourself</button>
+      </div>
       <div id="findResults"></div>
     </div>
   </section>
@@ -241,7 +406,9 @@ input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
       <button id="roundBackBtn" class="big" style="width:100%">◀ Back to Past games</button>
       <h3 id="roundTitle" style="margin-bottom:2px">Past game</h3>
       <p class="note" id="roundMeta" style="margin-top:0"></p>
+      <div id="roundProfile" class="profile-mini"></div>
       <div id="roundSummary"></div>
+      <button id="shareRoundBtn" class="primary big" style="margin-top:10px">📤 Share my round</button>
     </div>
     <div class="card">
       <h3 style="margin-top:0">Hole by hole</h3>
@@ -253,14 +420,42 @@ input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
 
   <!-- HELP VIEW -->
   <section id="view-help" class="view">
+    <div class="card" id="profileCard">
+      <h3 style="margin-top:0">👤 My profile</h3>
+      <div class="profile-photo-row">
+        <img id="profileAvatar" class="avatar profile-photo-big" style="display:none" alt="Your profile photo">
+        <span id="profileAvatarFallback" class="avatar-fallback profile-photo-big">⛳</span>
+        <div>
+          <div style="font-weight:900;color:var(--green);font-size:19px" id="profileDisplayName">Your golfer profile</div>
+          <div class="social-links" id="profileLinks"></div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:0">Your profile lives on this phone only — PinTally has no accounts yet.</p>
+      <label for="profileNameInput">Display name</label>
+      <div class="row">
+        <input type="text" id="profileNameInput" maxlength="30" placeholder="Your name">
+        <button id="profileNameMic" class="mic" style="flex:none" aria-label="Say your display name">🎤</button>
+      </div>
+      <label for="profilePhotoInput">Profile photo <span class="note">(optional — shrunk on this phone before saving)</span></label>
+      <input type="file" id="profilePhotoInput" accept="image/*">
+      <button id="profileRemovePhotoBtn" type="button" style="display:none;margin-top:6px">Remove photo</button>
+      <label for="profileInstaInput">Instagram handle <span class="note">(optional)</span></label>
+      <input type="text" id="profileInstaInput" maxlength="40" placeholder="@yourhandle">
+      <label for="profileFbInput">Facebook <span class="note">(optional — profile name or full link)</span></label>
+      <input type="text" id="profileFbInput" maxlength="120" placeholder="facebook.com/you or your profile name">
+    </div>
     <div class="card">
       <h3 style="margin-top:0">Help</h3>
+      <button id="takeTourBtn" class="primary big" style="margin-bottom:12px">▶ Take the tour</button>
+      <p><b>Your golfer profile:</b> The first time you open PinTally, you create your golfer profile — your name is the one thing it needs; a photo and your Instagram/Facebook are optional. That profile <b>is</b> Player 1: your name shows on your scoring rows, your scorecard, and your past games. Change it any time in <b>My profile</b> above and Player 1 updates with it. Your profile lives on this phone only — PinTally has no accounts yet, and nothing about it is uploaded anywhere.</p>
+      <p><b>Share my round:</b> Open any past game and tap “📤 Share my round” to send a plain-text recap — your name, the course, your score, your best hole and longest drive — through your phone's usual share options, or copy it to paste anywhere. The app itself never posts anything.</p>
+      <p><b>Map a course yourself:</b> If a course isn't in the app, start it under “Map a course yourself” on the Play tab, then as you play each hole tap “📍 I'm at the tee” on the tee box and “📍 I'm at the hole” at the flag. PinTally figures the hole's yardage from those two spots, may suggest a par (tap to accept — it never changes a par on its own), and remembers the whole map on this phone for every future round. The “Mapped: n of N holes” count shows your progress, and a mapped hole works like any other: saved tee for one-tap shot measuring, saved pin for yards to the pin.</p>
       <p><b>Keep score:</b> The score boxes are right at the top of the Play tab — open the app and you're looking at this hole's scores. Use the big − / + buttons for each player, the quick number row under them, or tap the 🎤 mic and just say the number (one tap, then speak). Totals vs par update on the Card tab.</p>
       <p><b>Saving:</b> Every score, drive, and pin saves to this device the moment you enter it — nothing is lost if you close the app. When a hole is done, tap the big <b>“✓ Save Hole”</b> button: it turns into “Hole saved ✓”, the hole number fills in green in the saved row, the hole gets a ✓ on the scorecard, and the app moves you to the next hole. Tap any hole number in the saved row to jump straight to that hole. Walking to the next hole with the Next button saves the one you just left, too. If you change anything on a saved hole, the button flips back to “Save Hole” so you know to tap it again.</p>
       <p><b>Measure my shot (the easy way):</b> Stand where you hit from and tap “📍 I'm where I hit from”. Walk to your ball — the yards count up live — then tap “📍 I'm at my ball”. The distance shows big and saves as that hole's drive on the card. The spot you hit from also saves as that hole's <b>tee</b> for this course: next round here, the tee is already saved, so you just walk to your ball and tap the one button. Tee in the wrong spot? “Move tee to where I'm standing” on the Measure card replaces it.</p>
       <p><b>Drive / shot distance (the two-button way):</b> On the tee, tap “Mark tee”. Walk to your ball and tap “Mark ball”. PinTally shows the yards between the two spots and saves it as that hole's drive on the scorecard. Marking a tee this way saves it as the course's tee for the hole, too — and if a tee is already saved, “Mark ball” measures from it.</p>
       <p><b>Past games:</b> The Past games tab lists every finished round — date, course, each player's total vs par, and holes played. Tap “See game” for the full hole-by-hole card, your best hole, and your longest drive, plus any swing videos from that round (tap one to watch its replay with tracer and drive distance). A round you're still playing shows at the top of Past games with a Resume button.</p>
-      <p><b>Find a course:</b> At the bottom of the Play tab, “Find courses near me” uses your location, or search by course name or town — both need internet; everything else in PinTally works offline. Scorecard details for most courses aren't published in one place, so a found course starts with par 4 on every hole and blank yardages — edit them under “Hole setup &amp; pin” on the Play tab and your edits save to that course. Found courses stay in the course list on this device.</p>
+      <p><b>Find a course:</b> At the bottom of the Play tab, “Find courses near me” uses your location, or search by course name or town — both need internet; everything else in PinTally works offline. Scorecard details for most courses aren't published in one place, so a found course starts with par 4 on every hole and blank yardages — edit them under “Hole setup &amp; pin” on the Play tab and your edits save to that course. Found courses stay in the course list on this device. If a name search comes up empty, the app offers to search the courses near that town instead — and if a course just isn't on the map anywhere, “Map it yourself” lets you map it as you play it.</p>
       <p><b>Yards to the pin:</b> The first time you reach a green, stand by the flag and tap “Set pin here”. From then on, that hole shows your live yards to the pin. Pins are saved on your device per course, so they are still there next round. GPS needs location permission and open sky; accuracy is usually about 5–10 yards.</p>
       <p><b>Swing video &amp; tracer:</b> On the Play tab, tap “🎥 Film my swing”, prop the phone where it can see you and the ball (behind you or off to the side, steady, a few steps back), take your swing, and tap Stop — the replay plays right away, with slow-motion and scrub controls for a closer look. One video per hole; filming a hole again replaces its old video.</p>
       <p>To show the ball flight, use the <b>tracer</b> on the replay: pause where the swing starts, pick “✏️ Tap the flight path” and tap a few points along where the ball flew, or pick “🏹 Quick arc” and tap where the ball took off and where it landed (you can drag the top of the arc up or down). The glowing line then plays back in time with the video. <b>Being straight with you:</b> the tracer is drawn by your taps — a phone video of a small, fast ball isn't something any app can reliably spot on its own, so PinTally doesn't pretend to find the ball automatically. Your taps are what make the line honest.</p>
@@ -284,7 +479,7 @@ input[type=file]{font:inherit;min-height:52px;padding:10px 0;width:100%}
 </nav>
 <script>
 "use strict";
-var VERSION = "v1.4";
+var VERSION = "v1.5";
 var STORE_KEY = "pintally_v1";
 
 /* Quail Ridge Golf and Event Venue, 519 Quail Run Rd, Grove, OK.
@@ -324,6 +519,9 @@ function defaultState(){
     pins:{}, /* courseId -> {hole:{lat,lng}} */
     tees:{}, /* courseId -> {hole:{lat,lng}} — tee boxes remembered per course, like pins */
     foundCourses:[], /* courses added via Find a course: {id,name,note,holes,pars,yards} */
+    tourSeen:false, /* v1.5: first-open walkthrough shows once, until finished/skipped */
+    profile:{name:"", photo:"", insta:"", fb:""}, /* v1.5: the golfer — on-device only, no account */
+    gpsYards:{}, /* v1.5: courseId -> {hole: yards} yardages measured by mapping (tee->pin GPS) */
     lastFind:null, /* last successful finder result list, cached so it survives restarts */
     savedHoles:{}, /* hole -> true once that hole is confirmed saved (Save button or moving on) */
     videoRefs:{}, /* hole -> IndexedDB video id, for the CURRENT card only */
@@ -332,22 +530,91 @@ function defaultState(){
 }
 var state = defaultState();
 try{ var raw = localStorage.getItem(STORE_KEY); if(raw){ var p = JSON.parse(raw); if(p && typeof p==="object") state = Object.assign(defaultState(), p); } }catch(e){}
-function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); return true; }catch(e){ return false; } }
+
+/* v1.5 profile normalization + one source of truth: profile.name IS Player 1. */
+if(!state.profile || typeof state.profile!=="object") state.profile={name:"", photo:"", insta:"", fb:""};
+state.profile = Object.assign({name:"", photo:"", insta:"", fb:""}, state.profile);
+if(!state.gpsYards || typeof state.gpsYards!=="object") state.gpsYards={};
+if(state.profile.name) state.players[0]=state.profile.name;
 
 function allCourses(){ return COURSES.concat(state.foundCourses || []); }
+function effectiveCourse(c){ var cu = state.custom[c.id];
+  return {id:c.id, name:c.name, note:c.note, holes:c.holes, pars:(cu&&cu.pars)||c.pars, yards:(cu&&cu.yards)||c.yards, customMapped:!!c.customMapped, town:c.town||""}; }
 function course(){ var c = allCourses().find(function(x){return x.id===state.courseId;}) || COURSES[0];
-  var cu = state.custom[c.id];
-  return {id:c.id, name:c.name, note:c.note, holes:c.holes, pars:(cu&&cu.pars)||c.pars, yards:(cu&&cu.yards)||c.yards}; }
+  return effectiveCourse(c); }
 function setCustomField(field, holeIdx, val){ var c = course(); if(!state.custom[c.id]) state.custom[c.id]={pars:c.pars.slice(), yards:c.yards.slice()}; state.custom[c.id][field][holeIdx]=val; save(); }
 
 var $ = function(id){ return document.getElementById(id); };
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(ch){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]; }); }
 function fmtVsPar(diff){ if(diff===0) return "E"; return diff>0 ? "+"+diff : String(diff); }
 
+/* ===== Course mapping (v1.5): guided tee+pin capture on top of the SAME per-course
+   tees/pins storage v1.4 already uses — no parallel store. A hole counts as mapped
+   when BOTH its tee and its pin are saved for that course. ===== */
+function mappingStats(courseId){
+  var raw = allCourses().find(function(x){ return x.id===courseId; }) || COURSES[0];
+  var c = effectiveCourse(raw);
+  var tees = state.tees[courseId]||{}, pins = state.pins[courseId]||{};
+  var rows=[], mapped=0;
+  for(var h=1;h<=c.holes;h++){
+    var tee=tees[h]||null, pin=pins[h]||null;
+    var both = !!(tee&&pin);
+    if(both) mapped++;
+    var gps = both? Math.round(haversineYards(tee, pin)) : null;
+    var isGps = !!((state.gpsYards[courseId]||{})[h]);
+    rows.push({hole:h, tee:!!tee, pin:!!pin, both:both, gps:gps, yards:(isGps&&gps!=null)? gps : (c.yards[h-1]||gps||0), gpsMeasured:isGps});
+  }
+  return {course:c, mapped:mapped, total:c.holes, rows:rows};
+}
+function suggestedPar(yards){ return yards<=249? 3 : (yards<=470? 4 : 5); }
+function mappedYardsFor(h){ var tee=teeFor(h), pin=pinFor(h); return (tee&&pin)? Math.round(haversineYards(tee, pin)) : null; }
+function applyMappedYardage(h){
+  var y = mappedYardsFor(h); if(y==null) return;
+  var c = course(), cur = c.yards[h-1]||0, isGps = !!((state.gpsYards[c.id]||{})[h]);
+  if(cur===0 || isGps){ /* never overwrite a yardage a person set (or a published card) */
+    setCustomField("yards", h-1, y);
+    if(!state.gpsYards[c.id]) state.gpsYards[c.id]={};
+    state.gpsYards[c.id][h]=y; save();
+  }
+}
+function renderMapCard(){
+  var card=$("mapCard"); if(!card) return;
+  var c=course(), h=state.currentHole, ms=mappingStats(c.id);
+  if(ms.mapped>=ms.total){ card.style.display="none"; return; }
+  card.style.display="";
+  $("mapProgressPill").textContent="Mapped: "+ms.mapped+" of "+ms.total+" holes";
+  var tee=teeFor(h), pin=pinFor(h);
+  $("mapTeeStatus").textContent = tee? "✓ Saved" : "Not set";
+  $("mapPinStatus").textContent = pin? "✓ Saved" : "Not set";
+  $("mapTeeBtn").textContent = tee? "📍 I'm at the tee (move it)" : "📍 I'm at the tee";
+  $("mapPinBtn").textContent = pin? "📍 I'm at the hole (move it)" : "📍 I'm at the hole";
+  var y=mappedYardsFor(h), line=$("mapYardageLine"), sug=$("parSuggestBtn");
+  if(y!=null){
+    var isGps=!!((state.gpsYards[c.id]||{})[h]);
+    line.textContent = isGps? ("Hole "+h+" yardage: "+y+" yd — measured by GPS from your tee and pin taps") : ("Tee to pin measures "+y+" yd by GPS — the saved yardage ("+(c.yards[h-1]||0)+" yd) stays as it is");
+    var sp=suggestedPar(y);
+    if(sp!==c.pars[h-1]){ sug.style.display=""; sug.textContent=y+" yd — looks like a par "+sp+". Tap to set par "+sp; sug.setAttribute("data-par", sp); }
+    else { sug.style.display="none"; line.textContent += " · Par "+c.pars[h-1]+" fits."; }
+  } else {
+    line.textContent = (tee||pin)? "One spot saved for hole "+h+" — get the other one and PinTally figures the yardage." : "";
+    sug.style.display="none";
+  }
+  var list=$("mapHoleList"); list.innerHTML="";
+  ms.rows.forEach(function(r){
+    var d=document.createElement("div"); d.className="map-hole-row";
+    d.innerHTML="<span>Hole "+r.hole+"</span><span>Tee "+(r.tee?"✓":"—")+" · Pin "+(r.pin?"✓":"—")+(r.both? " · "+r.yards+" yd"+(r.gpsMeasured?" (GPS)":"") : "")+"</span>";
+    list.appendChild(d);
+  });
+}
 function renderCourseSel(){
   var sel = $("courseSel"); sel.innerHTML = "";
-  allCourses().forEach(function(c){ var o=document.createElement("option"); o.value=c.id; o.textContent=c.name; sel.appendChild(o); });
-  sel.value = state.courseId; $("courseNote").textContent = course().note;
+  allCourses().forEach(function(c){ var o=document.createElement("option"); o.value=c.id;
+    o.textContent = c.name + (c.customMapped? " · Mapped: "+mappingStats(c.id).mapped+" of "+c.holes+" holes" : "");
+    sel.appendChild(o); });
+  var cc = course();
+  sel.value = state.courseId;
+  $("courseNote").textContent = cc.note + (cc.customMapped? " Mapped so far: "+mappingStats(cc.id).mapped+" of "+cc.holes+" holes." : "");
 }
 /* Saved tee boxes: same persistence pattern as pins (per course, per hole, on-device).
    Written whenever a tee is marked; read by the Measure flow and Mark ball. */
@@ -366,12 +633,12 @@ function renderPlayers(){
   for(var i=0;i<state.playerCount;i++){
     (function(i){
       var key = i+"-"+h, val = state.scores[key] || 0;
-      var div = document.createElement("div"); div.className="card"; div.style.background="#f7faf7";
+      var div = document.createElement("div"); div.className="card player-card";
       div.innerHTML = '<div style="font-weight:700">'+esc(state.players[i])+' <span class="note">(par '+c.pars[h-1]+')</span></div>';
       var st = document.createElement("div"); st.className="stepper"; st.style.marginTop="6px";
-      var minus=document.createElement("button"); minus.textContent="−"; minus.setAttribute("aria-label","Minus one stroke for "+state.players[i]);
+      var minus=document.createElement("button"); minus.textContent="−"; minus.className="step-minus"; minus.setAttribute("aria-label","Minus one stroke for "+state.players[i]);
       var v=document.createElement("div"); v.className="val"; v.textContent = val? String(val):"–"; v.id="scoreVal"+i;
-      var plus=document.createElement("button"); plus.textContent="+"; plus.setAttribute("aria-label","Plus one stroke for "+state.players[i]);
+      var plus=document.createElement("button"); plus.textContent="+"; plus.className="step-plus"; plus.setAttribute("aria-label","Plus one stroke for "+state.players[i]);
       var mic=document.createElement("button"); mic.className="mic"; mic.textContent="🎤"; mic.setAttribute("aria-label","Say score for "+state.players[i]);
       minus.onclick=function(){ setScore(i, Math.max(0,(state.scores[key]||0)-1)); };
       plus.onclick=function(){ setScore(i, Math.min(30,(state.scores[key]||0)+1)); };
@@ -380,7 +647,7 @@ function renderPlayers(){
       div.appendChild(st);
       var ql=document.createElement("div"); ql.className="quicklbl"; ql.textContent="Quick score — tap a number:"; div.appendChild(ql);
       var qr=document.createElement("div"); qr.className="quickrow";
-      [1,2,3,4,5,6,7,8].forEach(function(n){ var b=document.createElement("button"); b.textContent=n; b.setAttribute("aria-label","Set "+n+" strokes for "+state.players[i]);
+      [1,2,3,4,5,6,7,8].forEach(function(n){ var b=document.createElement("button"); b.textContent=n; if(val===n){ b.className="selected"; b.setAttribute("aria-pressed","true"); } b.setAttribute("aria-label","Set "+n+" strokes for "+state.players[i]);
         b.onclick=function(){ setScore(i, n); }; qr.appendChild(b); });
       div.appendChild(qr);
       wrap.appendChild(div);
@@ -435,7 +702,7 @@ function renderSaveUI(){
   $("savedLine").textContent = cnt ? ("Holes saved: "+list.join(", ")+" ✓ — "+cnt+" of "+c.holes+" · tap a number to jump to that hole") : "Scores save automatically as you go. Tap ✓ Save Hole when a hole is done so it gets its checkmark.";
 }
 
-function renderHoleMeta(){ var c=course(), h=state.currentHole; $("holeMeta").textContent="Par "+c.pars[h-1]+" · "+(c.yards[h-1]? c.yards[h-1]+" yd":"yards not set"); }
+function renderHoleMeta(){ var c=course(), h=state.currentHole; var isGps=!!((state.gpsYards[c.id]||{})[h]); $("holeMeta").textContent="Par "+c.pars[h-1]+" · "+(c.yards[h-1]? c.yards[h-1]+" yd"+(isGps?" (GPS)":""):"yards not set"); }
 function renderHole(){
   var c=course(), h=state.currentHole;
   $("holeNum").textContent=h; $("holeTotal").textContent=c.holes;
@@ -443,7 +710,7 @@ function renderHole(){
   $("parInput").value=c.pars[h-1]; $("yardsInput").value=c.yards[h-1]||"";
   $("hdrSub").textContent = c.name+" · Hole "+h+" of "+c.holes;
   $("distToPin").textContent="—";
-  renderPin(); renderShot(); renderMeasure(); renderFilm();
+  renderPin(); renderShot(); renderMeasure(); renderFilm(); renderMapCard();
 }
 function renderSticky(){
   var c=course(), h=state.currentHole;
@@ -507,7 +774,15 @@ function fetchTO(url, opts, timeoutMs){
   return fetch(url, o).then(function(r){ clearTimeout(t); if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
     .catch(function(e){ clearTimeout(t); throw e; });
 }
+var lastSearchQuery="";
+function showFindFallback(areaOffer){
+  var fb=$("findFallback"); if(!fb) return;
+  fb.style.display="block";
+  $("findAreaBtn").style.display = areaOffer? "" : "none";
+}
+function hideFindFallback(){ var fb=$("findFallback"); if(fb) fb.style.display="none"; }
 function renderFindResults(results){
+  hideFindFallback();
   var wrap=$("findResults"); wrap.innerHTML="";
   (results||[]).forEach(function(r){
     var b=document.createElement("button"); b.className="big"; b.style.width="100%"; b.style.marginTop="8px"; b.style.textAlign="left";
@@ -518,21 +793,28 @@ function renderFindResults(results){
   });
 }
 function cacheFind(results, origin){ state.lastFind={when:new Date().toLocaleString(), origin:origin||null, results:results}; save(); }
+function overpassResults(j, pos){
+  var seen={}, out=[];
+  (j.elements||[]).forEach(function(el){ var tags=el.tags||{}; var name=tags.name; if(!name) return;
+    var lat=(el.lat!=null? el.lat:(el.center&&el.center.lat)), lng=(el.lon!=null? el.lon:(el.center&&el.center.lon)); if(lat==null||lng==null) return;
+    var key=name+"@"+Number(lat).toFixed(3)+","+Number(lng).toFixed(3); if(seen[key]) return; seen[key]=1;
+    var town=tags["addr:city"]||tags["addr:town"]||tags["addr:village"]||"";
+    out.push({name:name, town:town, lat:lat, lng:lng, distMi:Math.round(haversineYards(pos,{lat:lat,lng:lng})/176)/10}); });
+  out.sort(function(a,b){ return a.distMi-b.distMi; });
+  return out.slice(0,20);
+}
+function fetchCoursesAround(pos, radiusM){
+  var q='[out:json][timeout:15];(node["leisure"="golf_course"](around:'+radiusM+','+pos.lat+","+pos.lng+');way["leisure"="golf_course"](around:'+radiusM+','+pos.lat+","+pos.lng+');relation["leisure"="golf_course"](around:'+radiusM+','+pos.lat+","+pos.lng+'););out center tags;';
+  return fetchTO("https://overpass-api.de/api/interpreter", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:"data="+encodeURIComponent(q)}, 20000)
+    .then(function(j){ return overpassResults(j, pos); });
+}
 function findNearMe(){
+  hideFindFallback();
   $("findStatus").textContent="Getting your location…";
   getPos(function(pos){
     $("findStatus").textContent="Looking for courses near you…";
-    var q='[out:json][timeout:15];(node["leisure"="golf_course"](around:40000,'+pos.lat+","+pos.lng+');way["leisure"="golf_course"](around:40000,'+pos.lat+","+pos.lng+');relation["leisure"="golf_course"](around:40000,'+pos.lat+","+pos.lng+'););out center tags;';
-    fetchTO("https://overpass-api.de/api/interpreter", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:"data="+encodeURIComponent(q)}, 20000).then(function(j){
-      var seen={}, out=[];
-      (j.elements||[]).forEach(function(el){ var tags=el.tags||{}; var name=tags.name; if(!name) return;
-        var lat=(el.lat!=null? el.lat:(el.center&&el.center.lat)), lng=(el.lon!=null? el.lon:(el.center&&el.center.lon)); if(lat==null||lng==null) return;
-        var key=name+"@"+Number(lat).toFixed(3)+","+Number(lng).toFixed(3); if(seen[key]) return; seen[key]=1;
-        var town=tags["addr:city"]||tags["addr:town"]||tags["addr:village"]||"";
-        out.push({name:name, town:town, lat:lat, lng:lng, distMi:Math.round(haversineYards(pos,{lat:lat,lng:lng})/176)/10}); });
-      out.sort(function(a,b){ return a.distMi-b.distMi; });
-      out=out.slice(0,20);
-      if(!out.length){ $("findStatus").textContent="No golf courses found within about 25 miles of here. Try searching by name or town."; renderFindResults([]); return; }
+    fetchCoursesAround(pos, 40000).then(function(out){
+      if(!out.length){ $("findStatus").textContent="No golf courses found within about 25 miles of here. Try searching by name or town, or map the course yourself."; renderFindResults([]); showFindFallback(false); return; }
       $("findStatus").textContent=out.length+" course"+(out.length>1?"s":"")+" near you — tap one to start a round there:";
       renderFindResults(out); cacheFind(out, pos);
     }).catch(function(){ $("findStatus").textContent=FIND_FAIL; });
@@ -540,6 +822,7 @@ function findNearMe(){
 }
 function findByName(){
   var q=$("findQuery").value.trim(); if(!q){ $("findStatus").textContent="Type a course name or town first."; return; }
+  lastSearchQuery=q; hideFindFallback();
   $("findStatus").textContent="Searching…";
   fetchTO("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=20&countrycodes=us&q="+encodeURIComponent(q+" golf course"), null, 15000).then(function(j){
     var out=[];
@@ -548,10 +831,52 @@ function findByName(){
       var a=r.address||{}; var place=a.city||a.town||a.village||"";
       var town=place+(a.state? (place? ", ":"")+a.state:"");
       out.push({name:name, town:town, lat:parseFloat(r.lat), lng:parseFloat(r.lon), distMi:null}); });
-    if(!out.length){ $("findStatus").textContent="No courses matched that search. Try the course name or town."; renderFindResults([]); return; }
+    if(!out.length){ $("findStatus").textContent="No courses matched that search. Try the course name or town."; renderFindResults([]); showFindFallback(true); return; }
     $("findStatus").textContent=out.length+" match"+(out.length>1?"es":"")+" — tap one to start a round there:";
     renderFindResults(out); cacheFind(out, null);
   }).catch(function(){ $("findStatus").textContent=FIND_FAIL; });
+}
+/* Area fallback (v1.5): a name search can miss a course that IS on the map
+   (Grove's Quail Ridge is the known case) — geocode the town and look around it. */
+function townCandidates(q){
+  var out=[], seen={};
+  function add(s){ s=(s||"").trim(); if(s && !seen[s.toLowerCase()]){ seen[s.toLowerCase()]=1; out.push(s); } }
+  add(q);
+  if(q.indexOf(",")>=0) add(q.slice(q.lastIndexOf(",")+1));
+  var words=q.replace(/,/g," ").split(/\s+/).filter(Boolean);
+  if(words.length>2) add(words.slice(-2).join(" "));
+  if(words.length>1) add(words[words.length-1]);
+  return out;
+}
+function geocodeTown(q){
+  var cands=townCandidates(q);
+  var chain=Promise.resolve(null);
+  cands.forEach(function(cand){
+    chain=chain.then(function(found){
+      if(found) return found;
+      return fetchTO("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=1&countrycodes=us&q="+encodeURIComponent(cand), null, 15000)
+        .then(function(j){
+          var r=(j||[])[0]; if(!r || r.lat==null || r.lon==null) return null;
+          var a=r.address||{}; var place=a.city||a.town||a.village||a.county||"";
+          var label=place+(a.state? (place? ", ":"")+a.state:"") || (r.display_name||"").split(",").slice(0,2).join(",");
+          return {lat:parseFloat(r.lat), lng:parseFloat(r.lon), label:label||cand};
+        }).catch(function(){ return null; });
+    });
+  });
+  return chain;
+}
+function findAreaSearch(){
+  var q=lastSearchQuery || $("findQuery").value.trim();
+  if(!q){ $("findStatus").textContent="Type a course name or town first."; return; }
+  $("findStatus").textContent="Looking for that town, then the courses around it…";
+  geocodeTown(q).then(function(geo){
+    if(!geo){ $("findStatus").textContent="Couldn't find that town on the map — check the spelling, or map the course yourself below."; showFindFallback(false); return; }
+    fetchCoursesAround(geo, 25000).then(function(out){
+      if(!out.length){ $("findStatus").textContent="No courses found near "+(geo.label||"that town")+" either. Some courses just aren't on the map — you can map this one yourself as you play it."; renderFindResults([]); showFindFallback(false); return; }
+      $("findStatus").textContent=out.length+" course"+(out.length>1?"s":"")+" near "+(geo.label||"that town")+" — tap one to start a round there:";
+      renderFindResults(out); cacheFind(out, geo);
+    }).catch(function(){ $("findStatus").textContent=FIND_FAIL; });
+  });
 }
 function foundCourseId(r){ var s=r.name+"@"+Number(r.lat).toFixed(3)+","+Number(r.lng).toFixed(3); var h=0; for(var i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))|0; } return "osm"+Math.abs(h); }
 function startFoundCourse(r){
@@ -701,6 +1026,155 @@ function renderHistory(){
     }
   });
 }
+/* ===== Golfer profile (v1.5): on-device only, no account. profile.name IS Player 1. ===== */
+function cleanInstaHandle(raw){
+  var s=String(raw||"").trim();
+  s=s.replace(/^https?:\/\/(www\.)?instagram\.com\//i,"").replace(/^@+/,"");
+  s=s.split(/[/?#]/)[0];
+  return s;
+}
+function instaUrl(raw){ var h=cleanInstaHandle(raw); return /^[A-Za-z0-9._]{1,30}$/.test(h)? "https://instagram.com/"+h : null; }
+function fbUrl(raw){
+  var s=String(raw||"").trim(); if(!s) return null;
+  if(/^https?:\/\//i.test(s)) return /facebook\.com/i.test(s)? s.replace(/^http:\/\//i,"https://") : null;
+  if(/^(www\.)?facebook\.com\//i.test(s)) return "https://"+s.replace(/^www\./i,"");
+  var name=s.replace(/^@+/,"").replace(/^\//,"").split(/[?#]/)[0];
+  return /^[A-Za-z0-9.\-]{2,60}(\/[A-Za-z0-9.\-]{2,60})?$/.test(name)? "https://facebook.com/"+name : null;
+}
+function profileInitials(){ var n=(state.profile.name||"").trim(); return n? n.split(/\s+/).map(function(w){ return w[0]; }).join("").slice(0,2).toUpperCase() : "⛳"; }
+function setAvatar(img, fb, photo, initials){
+  if(photo){ img.src=photo; img.style.display=""; fb.style.display="none"; }
+  else { img.removeAttribute("src"); img.style.display="none"; fb.style.display=""; fb.textContent=initials; }
+}
+function renderProfile(){
+  var p=state.profile;
+  setAvatar($("headerAvatar"), $("headerAvatarFallback"), p.photo, profileInitials());
+  $("headerProfileName").textContent=p.name||"";
+  setAvatar($("profileAvatar"), $("profileAvatarFallback"), p.photo, profileInitials());
+  $("profileDisplayName").textContent=p.name||"Your golfer profile";
+  if(document.activeElement!==$("profileNameInput")) $("profileNameInput").value=p.name||"";
+  if(document.activeElement!==$("profileInstaInput")) $("profileInstaInput").value=p.insta||"";
+  if(document.activeElement!==$("profileFbInput")) $("profileFbInput").value=p.fb||"";
+  $("profileRemovePhotoBtn").style.display = p.photo? "" : "none";
+  var links=$("profileLinks"); links.innerHTML="";
+  var iu=instaUrl(p.insta), fu=fbUrl(p.fb), any=false;
+  if(iu){ var a=document.createElement("a"); a.href=iu; a.target="_blank"; a.rel="noopener"; a.textContent="Instagram: @"+cleanInstaHandle(p.insta); links.appendChild(a); any=true; }
+  if(fu){ if(any) links.appendChild(document.createTextNode(" · ")); var a2=document.createElement("a"); a2.href=fu; a2.target="_blank"; a2.rel="noopener"; a2.textContent="Facebook profile"; links.appendChild(a2); any=true; }
+  if((p.insta && !iu) || (p.fb && !fu)){ var n=document.createElement("div"); n.className="note"; n.textContent="One of those social links doesn't look right yet — check it above."; links.appendChild(n); }
+  var rp=$("roundProfile");
+  if(rp){ rp.innerHTML=""; if(p.name){ var im=document.createElement("img"); im.className="avatar"; im.style.width="34px"; im.style.height="34px"; var fb2=document.createElement("span"); fb2.className="avatar-fallback"; fb2.style.width="34px"; fb2.style.height="34px"; fb2.style.fontSize="14px"; setAvatar(im, fb2, p.photo, profileInitials()); rp.appendChild(im); rp.appendChild(fb2); var nm=document.createElement("span"); nm.textContent=p.name; rp.appendChild(nm); } }
+}
+/* Photo downscale: a raw phone photo would blow localStorage — shrink to <=256px JPEG on-device first. */
+function processProfilePhoto(file){
+  return new Promise(function(res, rej){
+    if(!file) { rej(new Error("no file")); return; }
+    var url=URL.createObjectURL(file);
+    var img=new Image();
+    img.onload=function(){
+      try{
+        var scale=Math.min(1, 256/Math.max(img.width||256, img.height||256));
+        var w=Math.max(1, Math.round((img.width||256)*scale)), h=Math.max(1, Math.round((img.height||256)*scale));
+        var cv=document.createElement("canvas"); cv.width=w; cv.height=h;
+        cv.getContext("2d").drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        var out=null;
+        [0.82, 0.7, 0.55, 0.4].forEach(function(q){ if(!out || out.length>115000){ var d=cv.toDataURL("image/jpeg", q); if(!out || d.length<out.length) out=d; } });
+        if(out && out.length>115000){ var cv2=document.createElement("canvas"); var s2=192/Math.max(w,h); cv2.width=Math.max(1,Math.round(w*s2)); cv2.height=Math.max(1,Math.round(h*s2)); cv2.getContext("2d").drawImage(img,0,0,cv2.width,cv2.height); out=cv2.toDataURL("image/jpeg", 0.6); }
+        res(out);
+      }catch(e){ URL.revokeObjectURL(url); rej(e); }
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); rej(new Error("That photo couldn't be read.")); };
+    img.src=url;
+  });
+}
+/* First-run profile gate */
+var gatePhoto=null;
+function renderGatePhoto(){
+  setAvatar($("gateAvatar"), $("gateAvatarFallback"), gatePhoto, (function(){ var n=$("gateNameInput").value.trim(); return n? n.split(/\s+/).map(function(w){ return w[0]; }).join("").slice(0,2).toUpperCase() : "⛳"; })());
+  $("gateRemovePhotoBtn").style.display = gatePhoto? "" : "none";
+}
+function showProfileGate(){
+  var p=state.profile;
+  var prefill = p.name || ((state.players[0] && state.players[0]!=="Player 1")? state.players[0] : "");
+  $("gateNameInput").value=prefill;
+  $("gateInstaInput").value=p.insta||"";
+  $("gateFbInput").value=p.fb||"";
+  gatePhoto=p.photo||null;
+  renderGatePhoto(); updateGateSave();
+  $("profileGate").classList.add("on");
+}
+function hideProfileGate(){ $("profileGate").classList.remove("on"); }
+function updateGateSave(){ $("gateSaveProfileBtn").disabled = !$("gateNameInput").value.trim(); }
+function saveGateProfile(){
+  var name=$("gateNameInput").value.trim(); if(!name) return;
+  state.profile={name:name, photo:gatePhoto||"", insta:$("gateInstaInput").value.trim(), fb:$("gateFbInput").value.trim()};
+  state.players[0]=name;
+  if(!save()){ flashSaved("Couldn't save your profile on this phone — try removing the photo"); return; }
+  hideProfileGate(); renderProfile(); renderPlayers(); renderCard();
+  flashSaved("Profile saved ✓");
+  if(!state.tourSeen) openTour();
+}
+/* ===== First-open tour (v1.5) ===== */
+var tourIdx=0;
+function tourCount(){ return document.querySelectorAll("#tourViewport .tour-slide").length; }
+function renderTourDots(){
+  var d=$("tourDots"); d.innerHTML="";
+  for(var i=0;i<tourCount();i++){ var s=document.createElement("span"); s.className="tour-dot"+(i===tourIdx?" on":""); d.appendChild(s); }
+  $("tourBackBtn").style.visibility = tourIdx===0? "hidden":"visible";
+  $("tourNextBtn").textContent = tourIdx===tourCount()-1? "Done ✓" : "Next ▶";
+}
+function tourGo(i){
+  var vp=$("tourViewport"); var n=tourCount();
+  tourIdx=Math.max(0, Math.min(n-1, i));
+  vp.scrollTo({left: tourIdx*vp.clientWidth, behavior:"smooth"});
+  renderTourDots();
+}
+function openTour(){ tourIdx=0; var vp=$("tourViewport"); vp.scrollLeft=0; renderTourDots(); $("tourOverlay").classList.add("on"); }
+function closeTour(){
+  state.tourSeen=true;
+  if(!save()){ /* overlay still closes; flag simply isn't persisted */ }
+  $("tourOverlay").classList.remove("on");
+}
+/* ===== Share my round (v1.5): plain-text recap, share sheet or clipboard. No posting by the app. ===== */
+function shareTextForRound(r){
+  var rs=roundStats(r);
+  var name=state.profile.name || (rs.players[0]? rs.players[0].name : "") || (r.players&&r.players[0]) || "A golfer";
+  var lines=["🏌️ My PinTally round", name+" at "+r.courseName, r.date];
+  var p0=rs.players[0];
+  if(p0) lines.push("Total: "+p0.total+" ("+fmtVsPar(p0.vs)+")");
+  if(rs.snapshot && r.scores && r.pars){
+    var best=null;
+    for(var h=1;h<=r.holes;h++){ var s=r.scores["0-"+h]; if(!s) continue; var d=s-r.pars[h-1]; if(!best || d<best.d) best={h:h, s:s, par:r.pars[h-1], d:d}; }
+    if(best) lines.push("Best hole: Hole "+best.h+" — "+best.s+" on a par "+best.par+" ("+fmtVsPar(best.d)+")");
+  }
+  var drives=r.drives||{}; var dk=Object.keys(drives);
+  if(dk.length){ var bh=dk[0]; dk.forEach(function(hh){ if(drives[hh]>drives[bh]) bh=hh; }); lines.push("Longest drive: "+drives[bh]+" yd (hole "+bh+")"); }
+  var iu=instaUrl(state.profile.insta);
+  if(iu) lines.push("Find me: instagram.com/"+cleanInstaHandle(state.profile.insta));
+  return lines.join("\n");
+}
+function copyTextFallback(text){
+  if(navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+  return new Promise(function(res, rej){
+    var ta=document.createElement("textarea"); ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand("copy")? res() : rej(new Error("copy failed")); }catch(e){ rej(e); }
+    ta.remove();
+  });
+}
+function shareRound(idx){
+  var r=state.history[idx]; if(!r) return;
+  var text=shareTextForRound(r);
+  if(navigator.share){
+    navigator.share({title:"My PinTally round", text:text}).catch(function(err){
+      if(err && err.name==="AbortError") return;
+      copyTextFallback(text).then(function(){ flashSaved("Round copied ✓"); }, function(){ flashSaved("Couldn't share that round"); });
+    });
+  } else {
+    copyTextFallback(text).then(function(){ flashSaved("Round copied ✓ — paste it anywhere"); }, function(){ flashSaved("Couldn't copy that round"); });
+  }
+}
+
 /* Voice */
 var SR = window.SpeechRecognition || window.webkitSpeechRecognition || null;
 function voiceUnavailable(btn){ btn.title="Voice isn't available on this device/browser — typing works as always"; alert("Voice isn't available on this device/browser — typing works as always."); }
@@ -992,24 +1466,85 @@ $("saveHoleBtn").onclick=function(){ var h=state.currentHole;
   if(!holeHasData(h)){ flashSaved("Nothing on hole "+h+" yet — enter a score first"); return; }
   markHoleSaved(h); renderSaveUI(); renderCard(); flashSaved("Hole "+h+" saved ✓");
   if(h<course().holes){ setTimeout(function(){ if(state.currentHole===h) leaveHole(h+1); }, 900); } };
-$("parInput").onchange=function(){ var v=parseInt($("parInput").value,10); if(v>=3&&v<=6){ setCustomField("pars", state.currentHole-1, v); touchHole(state.currentHole); save(); } renderHoleMeta(); renderSticky(); renderPlayers(); renderCard(); };
-$("yardsInput").onchange=function(){ var v=parseInt($("yardsInput").value,10); if(!isNaN(v)&&v>=0&&v<=700){ setCustomField("yards", state.currentHole-1, v); touchHole(state.currentHole); save(); } renderHoleMeta(); renderSaveUI(); renderCard(); };
-$("setPinBtn").onclick=function(){ getPos(function(pos){ if(!state.pins[state.courseId]) state.pins[state.courseId]={}; state.pins[state.courseId][state.currentHole]=pos; touchHole(state.currentHole); save(); renderSaveUI(); $("pinStatus").textContent="Pin saved for hole "+state.currentHole+"."; updateDistToPin(); }, function(msg){ $("pinStatus").textContent=msg; }); };
-$("clearPinBtn").onclick=function(){ if(state.pins[state.courseId]) delete state.pins[state.courseId][state.currentHole]; touchHole(state.currentHole); save(); renderSaveUI(); $("distToPin").textContent="—"; renderPin(); };
+$("parInput").onchange=function(){ var v=parseInt($("parInput").value,10); if(v>=3&&v<=6){ setCustomField("pars", state.currentHole-1, v); touchHole(state.currentHole); save(); } renderHoleMeta(); renderSticky(); renderPlayers(); renderCard(); renderMapCard(); };
+$("yardsInput").onchange=function(){ var v=parseInt($("yardsInput").value,10); if(!isNaN(v)&&v>=0&&v<=700){ setCustomField("yards", state.currentHole-1, v); if(state.gpsYards[state.courseId]) delete state.gpsYards[state.courseId][state.currentHole]; touchHole(state.currentHole); save(); } renderHoleMeta(); renderSaveUI(); renderCard(); renderMapCard(); };
+$("setPinBtn").onclick=function(){ getPos(function(pos){ if(!state.pins[state.courseId]) state.pins[state.courseId]={}; state.pins[state.courseId][state.currentHole]=pos; applyMappedYardage(state.currentHole); touchHole(state.currentHole); save(); renderSaveUI(); renderMapCard(); renderCourseSel(); $("pinStatus").textContent="Pin saved for hole "+state.currentHole+"."; updateDistToPin(); }, function(msg){ $("pinStatus").textContent=msg; }); };
+$("clearPinBtn").onclick=function(){ if(state.pins[state.courseId]) delete state.pins[state.courseId][state.currentHole]; touchHole(state.currentHole); save(); renderSaveUI(); $("distToPin").textContent="—"; renderPin(); renderMapCard(); };
 $("refreshDistBtn").onclick=function(){ updateDistToPin(); };
-$("markTeeBtn").onclick=function(){ getPos(function(pos){ var h=state.currentHole; if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; delete state.marks[h].ball; saveTee(h, pos); touchHole(h); save(); renderShot(); renderSaveUI(); renderMeasure(); }, function(msg){ $("shotStatus").textContent=msg; }); };
+$("markTeeBtn").onclick=function(){ getPos(function(pos){ var h=state.currentHole; if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; delete state.marks[h].ball; saveTee(h, pos); applyMappedYardage(h); touchHole(h); save(); renderShot(); renderSaveUI(); renderMeasure(); renderMapCard(); renderCourseSel(); }, function(msg){ $("shotStatus").textContent=msg; }); };
 $("markBallBtn").onclick=function(){ var h=state.currentHole, m=state.marks[h]; var startTee=(m&&m.tee)||teeFor(h); if(!startTee){ $("shotStatus").textContent="Mark the tee first, then mark the ball."; return; } getPos(function(pos){ if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=startTee; state.marks[h].ball=pos; state.drives[h]=Math.round(haversineYards(startTee,pos)); touchHole(h); save(); renderShot(); renderCard(); renderMeasure(); }, function(msg){ $("shotStatus").textContent=msg; }); };
 $("clearShotBtn").onclick=function(){ var h=state.currentHole; delete state.marks[h]; delete state.drives[h]; touchHole(h); save(); renderShot(); renderSaveUI(); renderCard(); renderMeasure(); };
 /* Measure-my-shot wiring (same marks/drives underneath) */
-$("measureStartBtn").onclick=function(){ var h=state.currentHole; getPos(function(pos){ if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; delete state.marks[h].ball; delete state.drives[h]; saveTee(h, pos); measureStartPos=pos; touchHole(h); save(); $("measureLive").textContent="0 yd"; renderShot(); renderSaveUI(); renderMeasure(); startMeasureWatch(); flashSaved("Tee marked — walk to your ball"); }, function(msg){ $("measureStatus").textContent=msg; }); };
+$("measureStartBtn").onclick=function(){ var h=state.currentHole; getPos(function(pos){ if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; delete state.marks[h].ball; delete state.drives[h]; saveTee(h, pos); applyMappedYardage(h); measureStartPos=pos; touchHole(h); save(); $("measureLive").textContent="0 yd"; renderShot(); renderSaveUI(); renderMeasure(); renderMapCard(); renderCourseSel(); startMeasureWatch(); flashSaved("Tee marked — walk to your ball"); }, function(msg){ $("measureStatus").textContent=msg; }); };
 $("measureBallBtn").onclick=function(){ var h=state.currentHole, m=state.marks[h]; var start=(m&&m.tee)||measureStartPos||teeFor(h); if(!start){ $("measureStatus").textContent="First tap “I'm where I hit from” — that spot becomes this hole's tee."; return; } getPos(function(pos){ if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=start; state.marks[h].ball=pos; state.drives[h]=Math.round(haversineYards(start,pos)); stopMeasureWatch(); measureStartPos=null; touchHole(h); save(); renderShot(); renderCard(); renderMeasure(); flashSaved("Shot: "+state.drives[h]+" yd ✓"); }, function(msg){ $("measureStatus").textContent=msg; }); };
 $("measureAgainBtn").onclick=function(){ var h=state.currentHole; stopMeasureWatch(); measureStartPos=null; if(state.marks[h]) delete state.marks[h].ball; delete state.drives[h]; touchHole(h); save(); renderShot(); renderCard(); renderMeasure(); };
 $("measureClearBtn").onclick=function(){ var h=state.currentHole; stopMeasureWatch(); measureStartPos=null; delete state.marks[h]; delete state.drives[h]; touchHole(h); save(); renderShot(); renderSaveUI(); renderCard(); renderMeasure(); };
-$("measureTeeBtn").onclick=function(){ var h=state.currentHole; if(!confirm("Move hole "+h+"'s saved tee to where you're standing now? The old tee spot is replaced.")) return; getPos(function(pos){ saveTee(h, pos); if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; delete state.marks[h].ball; delete state.drives[h]; touchHole(h); save(); renderShot(); renderCard(); renderMeasure(); flashSaved("Tee moved ✓"); }, function(msg){ $("measureStatus").textContent=msg; }); };
+$("measureTeeBtn").onclick=function(){ var h=state.currentHole; if(!confirm("Move hole "+h+"'s saved tee to where you're standing now? The old tee spot is replaced.")) return; getPos(function(pos){ saveTee(h, pos); if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; delete state.marks[h].ball; delete state.drives[h]; applyMappedYardage(h); touchHole(h); save(); renderShot(); renderCard(); renderMeasure(); renderMapCard(); renderCourseSel(); flashSaved("Tee moved ✓"); }, function(msg){ $("measureStatus").textContent=msg; }); };
 /* Course finder wiring */
 $("findNearBtn").onclick=function(){ findNearMe(); };
 $("findSearchBtn").onclick=function(){ findByName(); };
 $("findQueryMic").onclick=function(){ voiceText($("findQuery"), $("findQueryMic")); };
+$("findAreaBtn").onclick=function(){ findAreaSearch(); };
+$("findMapBtn").onclick=function(){
+  showView("play");
+  var card=$("mapCreateBtn").closest(".card"); if(card) card.scrollIntoView({behavior:"smooth", block:"center"});
+  var q=lastSearchQuery || $("findQuery").value.trim();
+  if(q && !$("mapNameInput").value) $("mapNameInput").value=q;
+  setTimeout(function(){ try{ $("mapNameInput").focus({preventScroll:true}); }catch(e){} }, 350);
+};
+/* Map-this-hole wiring (writes the SAME saved tees/pins as every other flow) */
+$("mapTeeBtn").onclick=function(){ var h=state.currentHole;
+  if(teeFor(h) && !confirm("Hole "+h+" already has a saved tee. Move it to where you're standing now?")) return;
+  getPos(function(pos){ saveTee(h, pos); if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; applyMappedYardage(h); touchHole(h); save(); renderShot(); renderMeasure(); renderMapCard(); renderCourseSel(); renderSaveUI(); flashSaved("Tee saved for hole "+h+" ✓"); },
+    function(msg){ flashSaved(msg); });
+};
+$("mapPinBtn").onclick=function(){ var h=state.currentHole;
+  if(pinFor(h) && !confirm("Hole "+h+" already has a saved pin. Move it to where you're standing now?")) return;
+  getPos(function(pos){ if(!state.pins[state.courseId]) state.pins[state.courseId]={}; state.pins[state.courseId][h]=pos; applyMappedYardage(h); touchHole(h); save(); renderPin(); renderMapCard(); renderCourseSel(); renderSaveUI(); updateDistToPin(); flashSaved("Hole "+h+" pin saved ✓"); },
+    function(msg){ flashSaved(msg); });
+};
+$("parSuggestBtn").onclick=function(){ var sp=parseInt($("parSuggestBtn").getAttribute("data-par"),10); var h=state.currentHole;
+  if(sp>=3 && sp<=5){ setCustomField("pars", h-1, sp); touchHole(h); save(); renderHoleMeta(); renderSticky(); renderPlayers(); renderCard(); renderMapCard(); flashSaved("Par "+sp+" set for hole "+h+" ✓"); } };
+$("mapCreateBtn").onclick=function(){
+  var name=$("mapNameInput").value.trim() || "My course";
+  var town=$("mapTownInput").value.trim();
+  var holes=parseInt($("mapHolesSel").value,10)===18? 18:9;
+  var pars=[], yards=[]; for(var i=0;i<holes;i++){ pars.push(4); yards.push(0); }
+  var nc={id:"map"+Date.now(), name:name+(town? " — "+town:""), town:town, customMapped:true,
+    note:"A course you're mapping yourself"+(town? " · "+town:"")+". Tap “I'm at the tee” and “I'm at the hole” on each hole as you play — yardages and pars fill in from your taps and stay saved on this phone.",
+    holes:holes, pars:pars, yards:yards};
+  state.foundCourses.push(nc); save();
+  if(applyCourseChange(nc.id)){ flashSaved("Mapping started: "+name); window.scrollTo(0,0); }
+  renderCourseSel(); renderMapCard();
+};
+/* Tour wiring */
+$("tourNextBtn").onclick=function(){ if(tourIdx>=tourCount()-1){ closeTour(); } else tourGo(tourIdx+1); };
+$("tourBackBtn").onclick=function(){ tourGo(tourIdx-1); };
+$("tourSkipBtn").onclick=function(){ closeTour(); };
+$("tourViewport").addEventListener("scroll", function(){ var vp=$("tourViewport"); var i=Math.round(vp.scrollLeft/Math.max(1,vp.clientWidth)); if(i!==tourIdx){ tourIdx=i; renderTourDots(); } });
+$("takeTourBtn").onclick=function(){ openTour(); };
+/* Profile gate wiring */
+$("gateNameInput").addEventListener("input", function(){ updateGateSave(); renderGatePhoto(); });
+$("gateNameMic").onclick=function(){ voiceText($("gateNameInput"), $("gateNameMic")); setTimeout(updateGateSave, 300); };
+$("gatePhotoInput").onchange=function(){ var f=$("gatePhotoInput").files[0]; if(!f) return;
+  processProfilePhoto(f).then(function(data){ gatePhoto=data; renderGatePhoto(); }, function(){ flashSaved("That photo couldn't be used — pick another"); });
+  $("gatePhotoInput").value=""; };
+$("gateRemovePhotoBtn").onclick=function(){ gatePhoto=""; renderGatePhoto(); };
+$("gateSaveProfileBtn").onclick=function(){ saveGateProfile(); };
+/* My Profile editor wiring (auto-saves on change, like the rest of the app) */
+$("profileNameInput").onchange=function(){ var v=$("profileNameInput").value.trim();
+  if(!v){ $("profileNameInput").value=state.profile.name||""; flashSaved("Your golfer name can't be empty"); return; }
+  state.profile.name=v; state.players[0]=v; save(); renderProfile(); renderPlayers(); renderCard(); flashSaved("Name saved ✓"); };
+$("profileNameMic").onclick=function(){ voiceText($("profileNameInput"), $("profileNameMic")); };
+$("profileInstaInput").onchange=function(){ state.profile.insta=$("profileInstaInput").value.trim(); save(); renderProfile(); };
+$("profileFbInput").onchange=function(){ state.profile.fb=$("profileFbInput").value.trim(); save(); renderProfile(); };
+$("profilePhotoInput").onchange=function(){ var f=$("profilePhotoInput").files[0]; if(!f) return;
+  var old=state.profile.photo;
+  processProfilePhoto(f).then(function(data){ state.profile.photo=data; if(!save()){ state.profile.photo=old; save(); flashSaved("Couldn't save that photo on this phone"); } renderProfile(); },
+    function(){ flashSaved("That photo couldn't be used — pick another"); });
+  $("profilePhotoInput").value=""; };
+$("profileRemovePhotoBtn").onclick=function(){ state.profile.photo=""; save(); renderProfile(); flashSaved("Photo removed"); };
+$("shareRoundBtn").onclick=function(){ if(detailIdx!=null) shareRound(detailIdx); };
 $("roundBackBtn").onclick=function(){ showView("history"); };
 $("finishRoundBtn").onclick=function(){ var c=course(); var parts=[]; for(var i=0;i<state.playerCount;i++){ var z=totalsFor(i); if(z.played) parts.push(state.players[i]+" "+z.total+" ("+fmtVsPar(z.vs)+")"); }
   if(!parts.length){ alert("Enter at least one score before finishing the round."); return; }
@@ -1021,7 +1556,13 @@ $("finishRoundBtn").onclick=function(){ var c=course(); var parts=[]; for(var i=
     drives:Object.assign({}, state.drives),
     marks:JSON.parse(JSON.stringify(state.marks))});
   state.videoRefs={}; state.scores={}; state.drives={}; state.marks={}; state.savedHoles={}; state.currentHole=1; stopMeasureWatch(); measureStartPos=null; save(); renderHole(); renderPlayers(); renderCard(); renderHistory(); showView("history"); };
-$("clearDemoBtn").onclick=function(){ if(confirm("Clear sample data? This clears the current card, saved rounds, and all swing videos on this device.")){ Object.keys(state.videoRefs).forEach(function(hh){ deleteVideoId(state.videoRefs[hh]); }); state.history.forEach(function(r){ var vv=r.videos||{}; Object.keys(vv).forEach(function(hh){ deleteVideoId(vv[hh]); }); }); var keepPins=state.pins, keepTees=state.tees, keepFound=state.foundCourses; state=Object.assign(defaultState(),{termsAccepted:true, pins:keepPins, tees:keepTees, foundCourses:keepFound}); save(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory(); } };
+$("clearDemoBtn").onclick=function(){ if(confirm("Clear sample data? This clears the current card, saved rounds, and all swing videos on this device. Your profile, mapped courses, saved tees and pins stay.")){ Object.keys(state.videoRefs).forEach(function(hh){ deleteVideoId(state.videoRefs[hh]); }); state.history.forEach(function(r){ var vv=r.videos||{}; Object.keys(vv).forEach(function(hh){ deleteVideoId(vv[hh]); }); });
+  var keepPins=state.pins, keepTees=state.tees, keepFound=state.foundCourses, keepProfile=state.profile, keepTour=state.tourSeen;
+  var keepCustom={}, keepGps={};
+  (keepFound||[]).forEach(function(c){ if(c.customMapped){ if(state.custom[c.id]) keepCustom[c.id]=state.custom[c.id]; if(state.gpsYards[c.id]) keepGps[c.id]=state.gpsYards[c.id]; } });
+  state=Object.assign(defaultState(),{termsAccepted:true, tourSeen:keepTour, profile:keepProfile, pins:keepPins, tees:keepTees, foundCourses:keepFound, custom:keepCustom, gpsYards:keepGps});
+  if(state.profile.name) state.players[0]=state.profile.name;
+  save(); renderProfile(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory(); } };
 $("filmBtn").onclick=function(){ startRecording(); };
 $("stopRecBtn").onclick=function(){ stopRecording(); };
 $("watchReplayBtn").onclick=function(){ var id=state.videoRefs[state.currentHole]; if(id) openReplay(id, state.currentHole, null, "play"); };
@@ -1063,7 +1604,8 @@ $("tracerCanvas").addEventListener("pointermove", function(ev){
 $("tracerCanvas").addEventListener("pointerup", function(){ dragCtrl=false; });
 window.addEventListener("resize", function(){ if($("view-video").classList.contains("on")){ sizeCanvas(); drawTracer(); } });
 $("termsCheck").onchange=function(){ $("agreeBtn").disabled = !$("termsCheck").checked; };
-$("agreeBtn").onclick=function(){ state.termsAccepted=true; save(); $("termsGate").style.display="none"; };
+$("agreeBtn").onclick=function(){ state.termsAccepted=true; save(); $("termsGate").style.display="none";
+  if(!state.profile.name) showProfileGate(); else if(!state.tourSeen) openTour(); };
 /* Email us link (Help §11) */
 (function(){ var subj=encodeURIComponent("PinTally help — "+VERSION); var body=encodeURIComponent("Tell us what you were trying to do and what happened:\n\n"); $("emailUsBtn").href="mailto:whitewolfbackoffice@gmail.com?subject="+subj+"&body="+body; })();
 $("verFoot").textContent = VERSION;
@@ -1071,7 +1613,10 @@ $("termsGate").style.display = state.termsAccepted? "none":"flex";
 if(state.termsAccepted) $("termsCheck").checked = true;
 seedTeesFromMarks();
 if(state.lastFind && state.lastFind.results && state.lastFind.results.length){ $("findStatus").textContent="Your last course search ("+state.lastFind.when+"):"; renderFindResults(state.lastFind.results); }
-renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory();
+renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory(); renderProfile();
+/* First-run order: terms -> golfer profile -> tour -> app. */
+if(state.termsAccepted && !state.profile.name) showProfileGate();
+else if(state.termsAccepted && !state.tourSeen) openTour();
 </script>
 </body>
 </html>
