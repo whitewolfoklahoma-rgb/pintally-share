@@ -533,7 +533,7 @@ nav.tabs button.on{background:linear-gradient(180deg,#17663a,#0b3d24);color:#fff
 </nav>
 <script>
 "use strict";
-var VERSION = "v1.6";
+var VERSION = "v1.6.1";
 var STORE_KEY = "pintally_v1";
 
 /* Quail Ridge Golf and Event Venue, 519 Quail Run Rd, Grove, OK.
@@ -917,7 +917,7 @@ function renderHoleMap(){
 
 /* ===== Course finder (OpenStreetMap: Overpass for near-me, Nominatim for name/town search).
    ONLINE only — nothing in core scoring/GPS/video depends on it. ===== */
-var FIND_FAIL="Course search needs internet — or start with Any course below.";
+var FIND_FAIL="The course lookup didn't answer — that's the map server being down or busy, not your connection. Try again in a bit, or map the course yourself below.";
 function fetchTO(url, opts, timeoutMs){
   var ctl=("AbortController" in window)? new AbortController():null;
   var t=setTimeout(function(){ if(ctl){ try{ ctl.abort(); }catch(e){} } }, timeoutMs||15000);
@@ -955,10 +955,26 @@ function overpassResults(j, pos){
   out.sort(function(a,b){ return a.distMi-b.distMi; });
   return out.slice(0,20);
 }
+var OVERPASS_INSTANCES=[
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter"
+];
 function fetchCoursesAround(pos, radiusM){
   var q='[out:json][timeout:15];(node["leisure"="golf_course"](around:'+radiusM+','+pos.lat+","+pos.lng+');way["leisure"="golf_course"](around:'+radiusM+','+pos.lat+","+pos.lng+');relation["leisure"="golf_course"](around:'+radiusM+','+pos.lat+","+pos.lng+'););out center tags;';
-  return fetchTO("https://overpass-api.de/api/interpreter", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:"data="+encodeURIComponent(q)}, 20000)
-    .then(function(j){ if(!j || !Array.isArray(j.elements)) throw new Error("Unexpected course lookup response"); return overpassResults(j, pos); });
+  var body="data="+encodeURIComponent(q);
+  function tryInstance(idx){
+    return fetchTO(OVERPASS_INSTANCES[idx], {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:body}, 12000)
+      .then(function(j){
+        if(!j || !Array.isArray(j.elements)) throw new Error("Unexpected course lookup response");
+        return overpassResults(j, pos);
+      })
+      .catch(function(err){
+        if(idx+1 < OVERPASS_INSTANCES.length) return tryInstance(idx+1);
+        throw err;
+      });
+  }
+  return tryInstance(0);
 }
 function findNearMe(){
   hideFindFallback();
@@ -969,7 +985,7 @@ function findNearMe(){
       if(!out.length){ $("findStatus").textContent="No golf courses found within about 25 miles of here. Try searching by name or town, or map the course yourself."; renderFindResults([]); showFindFallback(false); return; }
       $("findStatus").textContent=out.length+" course"+(out.length>1?"s":"")+" near you — tap one to start a round there:";
       renderFindResults(out); cacheFind(out, pos);
-    }).catch(function(){ $("findStatus").textContent=FIND_FAIL; });
+    }).catch(function(){ $("findStatus").textContent=FIND_FAIL; renderFindResults([]); showFindFallback(false); });
   }, function(msg){ $("findStatus").textContent=msg; });
 }
 function findByName(){
@@ -986,7 +1002,7 @@ function findByName(){
     if(!out.length){ $("findStatus").textContent="No courses matched that search. Try the course name or town."; renderFindResults([]); showFindFallback(true); return; }
     $("findStatus").textContent=out.length+" match"+(out.length>1?"es":"")+" — tap one to start a round there:";
     renderFindResults(out); cacheFind(out, null);
-  }).catch(function(){ $("findStatus").textContent=FIND_FAIL; });
+  }).catch(function(){ $("findStatus").textContent=FIND_FAIL; renderFindResults([]); showFindFallback(false); });
 }
 /* Area fallback (v1.5): a name search can miss a course that IS on the map
    (Grove's Quail Ridge is the known case) — geocode the town and look around it. */
