@@ -228,12 +228,32 @@ footer{color:#c8d4c2}
 #celebrate{position:fixed;top:74px;left:50%;transform:translateX(-50%);z-index:45;display:none;max-width:92vw;text-align:center;background:linear-gradient(160deg,#0e4527,#07291a);border:2px solid var(--gold);color:#ffe9a8;border-radius:20px;padding:20px 28px;font-family:Georgia,'Times New Roman',serif;font-size:31px;font-weight:900;box-shadow:0 16px 40px rgba(0,0,0,.55);cursor:pointer}
 #celebrate.show{display:block}
 #celebrate.show.small{font-size:20px;padding:12px 22px}
+
+/* ===== PinTally v1.8.0: modern app-look redesign (BirdTally pattern, country-club palette) ===== */
+:root{--bar-h:64px}
+main{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+nav.tabs{background:rgba(8,28,17,.97);border-top:1px solid #476b4e;box-shadow:0 -3px 16px rgba(0,0,0,.35);padding:6px 8px calc(6px + env(safe-area-inset-bottom));gap:2px;z-index:60}
+nav.tabs button{flex:1;background:none;border:none;box-shadow:none;color:#c8d4c2;padding:4px 2px 5px;border-radius:14px;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-weight:700}
+nav.tabs button .ic{font-size:21px;line-height:1.15;padding:3px 14px;border-radius:999px;transition:background .15s}
+nav.tabs button .lb{font-size:11.5px;letter-spacing:.2px}
+nav.tabs button.on{background:none;color:#ffd968;box-shadow:none}
+nav.tabs button.on .ic{background:linear-gradient(180deg,#f0b93a,#df9f14);box-shadow:0 2px 6px rgba(233,163,25,.5)}
+.view.on{display:block;animation:tabIn .28s ease both}
+@keyframes tabIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+button{border-radius:999px}
+input[type=text],input[type=number],select{border-radius:12px}
+#termsGate{background:rgba(7,30,18,.8)}
+#termsGate .card,#profileGate .card{border-radius:22px;padding:26px 20px 22px;box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.gicon{font-size:66px;text-align:center;line-height:1.1}
+.gname{font-family:Georgia,'Times New Roman',serif;text-align:center;font-size:27px;font-weight:900;margin:2px 0;color:#ffd968}
+.gwelcome{text-align:center;color:#c8d4c2;margin:0 0 6px;font-size:15px}
+#saveToast{bottom:calc(84px + env(safe-area-inset-bottom))}
 </style>
 </head>
 <body>
 <div id="termsGate" role="dialog" aria-label="Terms">
   <div class="card">
-    <h2>PinTally — please read</h2>
+    <div class="gicon">⛳</div><div class="gname">PinTally</div><p class="gwelcome">Welcome! Keep your score, measure your drives, and know your yards to the pin — all right on this phone. Before you start, here are the short terms:</p>
     <p>PinTally keeps your golf scores, drive distances, yards-to-the-pin, and any swing videos you record on <b>this device only</b>. No account, no sign-in, nothing is sent anywhere. GPS distances come from your phone and are a guide — typically within about 5–10 yards under open sky — not a laser rangefinder.</p>
     <p>By using PinTally you agree to the Terms in the Help tab: the app is provided as-is by White Wolf Apps, scores and distances are for your own recreational use, and you are responsible for watching where you walk and swing.</p>
     <label style="display:flex;gap:10px;align-items:flex-start;font-weight:400"><input type="checkbox" id="termsCheck" style="width:26px;height:26px;flex:none"> <span>I have read and agree to the Terms above.</span></label>
@@ -647,15 +667,15 @@ footer{color:#c8d4c2}
 <div id="saveToast" role="status"></div>
 <div id="celebrate" role="status" aria-live="polite"></div>
 <nav class="tabs">
-  <button data-view="play" class="on">⛳ Play</button>
-  <button data-view="shots">🏌️ Shots</button>
-  <button data-view="card">🗂️ Card</button>
-  <button data-view="history">📚 Past games</button>
-  <button data-view="help">❓ Help</button>
+  <button data-view="play" class="on"><span class="ic">⛳</span><span class="lb">Play</span></button>
+  <button data-view="shots"><span class="ic">🏌️</span><span class="lb">Shots</span></button>
+  <button data-view="card"><span class="ic">🗂️</span><span class="lb">Card</span></button>
+  <button data-view="history"><span class="ic">📚</span><span class="lb">Past games</span></button>
+  <button data-view="help"><span class="ic">❓</span><span class="lb">Help</span></button>
 </nav>
 <script>
 "use strict";
-var VERSION = "v1.7.1";
+var VERSION = "v1.8.0";
 var STORE_KEY = "pintally_v1";
 
 /* Quail Ridge Golf and Event Venue, 519 Quail Run Rd, Grove, OK.
