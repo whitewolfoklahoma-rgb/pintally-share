@@ -376,6 +376,13 @@ input[type=text],input[type=number],select{border-radius:12px}
       <div id="caddyAdvice" class="caddy-advice" aria-live="polite"></div>
       <button id="caddyTalkBtn" class="primary caddy-talk" type="button">🎤 Talk to Caddy</button>
       <p id="caddyStatus" class="caddy-status">Tap Talk to Caddy and just say it — “Shot two, hole three, 7-iron.” One tap, no send button. Everything saves itself.</p>
+      <button id="caddyFindBtn" class="big" type="button" style="width:100%;margin-top:8px">📍 Find my course</button>
+      <div id="caddyFindStatus" class="caddy-status"></div>
+      <div id="caddyFindResults"></div>
+      <div class="row" style="margin-top:8px">
+        <input type="text" id="caddyFindQuery" placeholder="Or type a course or town…">
+        <button id="caddyFindNameBtn" type="button" style="flex:none">Look it up</button>
+      </div>
       <div id="caddyPinLine" class="caddy-pin"></div>
       <div id="caddyLastShot" class="caddy-last"></div>
       <div id="caddyMemory" class="caddy-mem"></div>
@@ -693,7 +700,7 @@ input[type=text],input[type=number],select{border-radius:12px}
       <p><b>Where things live:</b> Play is condensed on purpose — the top block is the whole hole: your score, the one-button shot counter, the club chips, Save Hole, and the swing-video buttons. Everything else for the hole (Your Caddy, the hole map, hole setup &amp; pin, and course mapping) sits in the one <b>Hole tools</b> card right under it. <b>Swipe left</b> on Play (or tap the Shots tab) to see this hole drawn out: today's shot chain, last time's shots underneath, this round's shots with clubs and distances, past rounds on this hole, and this hole's swing videos. Swipe right to come back.</p>
       <p><b>Your Caddy:</b> The Caddy section of Hole tools works from <b>your own numbers</b> — the club distances you type in, plus every shot you tag (after two shots with a club, its learned average takes over). It adds the live wind (Open-Meteo, the one thing in PinTally that needs internet): a headwind makes the hole play longer, a tailwind shorter, about 1% per mph of wind along the line to the pin — a rule of thumb, not a promise. It also remembers your past rounds on the hole — your plan, what worked last time, and which clubs your good holes came from. Club success means: how the hole finished (birdie/par/bogey or worse) on holes where you used that club, counted once per club per hole, from your rounds only. Nothing comes from tour pros or other golfers, and there are no made-up club distances — until you've given it numbers, the Caddy says so instead of guessing.</p>
       <p><b>Past games:</b> The Past games tab lists every finished round — date, course, each player's total vs par, and holes played. Tap “See game” for the full hole-by-hole card, your best hole, and your longest drive, plus any swing videos from that round (tap one to watch its replay with tracer and drive distance). A round you're still playing shows at the top of Past games with a Resume button.</p>
-      <p><b>Find a course:</b> At the bottom of the Play tab, “Find courses near me” uses your location, or search by course name or town — both need internet; everything else in PinTally works offline. Scorecard details for most courses aren't published in one place, so a found course starts with par 4 on every hole and blank yardages — edit them under “Hole setup &amp; pin” on the Play tab and your edits save to that course. Found courses stay in the course list on this device. If a name search comes up empty, the app offers to search the courses near that town instead — and if a course just isn't on the map anywhere, “Map it yourself” lets you map it as you play it.</p>
+      <p><b>Find a course:</b> At the bottom of the Play tab, “Find courses near me” uses your location, or search by course name or town — both need internet; everything else in PinTally works offline. Scorecard details for most courses aren't published in one place, so a found course starts with par 4 on every hole and blank yardages — edit them under “Hole setup &amp; pin” on the Play tab and your edits save to that course. Found courses stay in the course list on this device. If a name search comes up empty, the app offers to search the courses near that town instead — and if a course just isn't on the map anywhere, “Map it yourself” lets you map it as you play it. The same finder is on the Caddy card too — “📍 Find my course” — for one-touch use when you arrive at a course.</p>
       <p><b>Hole map:</b> The hole map is a simple diagram drawn from the spots you've marked — tee, your ball, and the pin — with the real distances between them. It isn't a picture of the actual fairway; courses don't publish that.</p>
       <p><b>Yards to the pin:</b> The first time you reach a green, stand by the flag and tap “Set pin here”. From then on, that hole shows your live yards to the pin. Pins are saved on your device per course, so they are still there next round. GPS needs location permission and open sky; accuracy is usually about 5–10 yards.</p>
       <p><b>Swing video &amp; tracer:</b> On the Play tab, tap “🎥 Film my swing”, prop the phone where it can see you and the ball (behind you or off to the side, steady, a few steps back), take your swing, and tap Stop — the replay plays right away, with slow-motion and scrub controls for a closer look. One video per hole; filming a hole again replaces its old video.</p>
@@ -1251,11 +1258,38 @@ function renderCaddie(){
    own logged/manual numbers — never invented. ===== */
 var pendingClub=null, pendingClubHole=null; /* club declared for the shot he is ABOUT to hit */
 function caddySay(msg){ var el=$("caddyStatus"); if(el) el.textContent=msg; }
+/* --- Caddy voice: a male golf-commentator read. Pick a male voice from
+   whatever the device offers (voice lists load async, so refresh on
+   voiceschanged and again at speak time); lower pitch + a slower rate give
+   the calm broadcast delivery even on a voice with no male name. --- */
+var caddyVoice=null;
+function pickCaddyVoice(){
+  if(!window.speechSynthesis || typeof window.speechSynthesis.getVoices!=="function") return null;
+  var voices=window.speechSynthesis.getVoices()||[];
+  var male=/google uk english male|microsoft david|microsoft mark|microsoft guy|daniel|\balex\b|fred|brian|matthew|christopher|\bpaul\b|\bjames\b|aaron/i;
+  var female=/female|samantha|victoria|zira|aria|jenny|susan|karen|moira|fiona|veena|catherine|allison|ava\b/i;
+  var firstEn=null;
+  for(var i=0;i<voices.length;i++){
+    var v=voices[i], nm=v.name||"", lang=(v.lang||"").toLowerCase().replace("_","-");
+    if(lang.indexOf("en-us")!==0 && lang.indexOf("en-gb")!==0) continue;
+    if(!firstEn) firstEn=v;
+    if(male.test(nm) && !female.test(nm)) return v;
+  }
+  return firstEn;
+}
+function refreshCaddyVoice(){ var v=pickCaddyVoice(); if(v) caddyVoice=v; }
+if(window.speechSynthesis){
+  if(typeof window.speechSynthesis.addEventListener==="function") window.speechSynthesis.addEventListener("voiceschanged", refreshCaddyVoice);
+  window.speechSynthesis.onvoiceschanged=refreshCaddyVoice;
+  refreshCaddyVoice();
+}
 function caddySpeak(text){
   try{
     if(!window.speechSynthesis || typeof SpeechSynthesisUtterance==="undefined") return;
     window.speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=1.02;
+    if(!caddyVoice) refreshCaddyVoice();
+    var u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=0.92; u.pitch=0.85;
+    if(caddyVoice) u.voice=caddyVoice;
     window.speechSynthesis.speak(u);
   }catch(e){}
 }
@@ -1470,7 +1504,7 @@ function handleCaddySpeech(txt){
     if(p.shot!=null && r.type==="shot" && p.shot!==r.n) note+="You said shot "+p.shot+" — your check-ins make that shot "+r.n+", so I counted it as "+r.n+". ";
     if(p.shot!=null && p.shot>1 && r.type==="tee") note+="No starting spot was set for this hole, so I set it here — your count runs from here. ";
     caddySay(note+r.summary);
-    if(r.type==="shot" || r.type==="tee") flashSaved("Saved ✓");
+    if(r.type==="shot" || r.type==="tee"){ flashSaved("Saved ✓"); caddySpeak((note+r.summary).trim()); }
   }, function(msg){ caddySay(msg); });
 }
 /* --- Caddy advice button: one touch, live fix, his own numbers only --- */
@@ -1485,20 +1519,20 @@ function caddyAdvice(){
     if(pin){
       target=Math.round(haversineYards(pos, pin)); targetLabel="pin";
       lines.push("You're about "+target+" yards out.");
-      speak="About "+target+" yards out. ";
+      speak="Here on hole "+h+"... about "+target+" yards to the pin. ";
     } else if(tee){
       var fromTee=Math.round(haversineYards(tee, pos)), cardYds=c.yards[h-1]||0;
       if(cardYds>0 && fromTee>10){
         target=Math.max(cardYds-fromTee, 0); targetLabel="card";
         lines.push("No pin set for this hole yet — by the card ("+cardYds+" yd) you've covered about "+fromTee+", so roughly "+target+" left.");
-        speak="No pin set here yet. By the card, roughly "+target+" yards left. ";
+        speak="Here on hole "+h+" — no pin set yet, so we'll go by the card: roughly "+target+" yards left. ";
       } else {
         lines.push("No pin set for this hole yet, and you're about "+fromTee+" yd from the tee. Say “set pin” when you're at the green and I'll give you real pin numbers.");
-        speak="No pin set for this hole yet. ";
+        speak="Here on hole "+h+" — no pin set for this hole yet. ";
       }
     } else {
       lines.push("No pin and no tee set for this hole yet — Talk to Caddy at the tee to set your starting spot, and say “set pin” at the green.");
-      speak="I don't have this hole mapped yet. ";
+      speak="Here on hole "+h+" — I don't have this hole mapped yet. ";
     }
     if(target!=null){
       var pick=pickClubFor(target);
@@ -1507,10 +1541,10 @@ function caddyAdvice(){
         lines.push("That's your "+pick.club+" — you "+(learned? "average about "+avg : "have it set at "+avg)+" with it.");
         speak+="That's your "+pick.club+". You "+(learned? "average about "+avg : "have it set at "+avg)+" with it. ";
         var tm=typicalMiss(pick.club);
-        if(tm){ lines.push("You usually miss it "+tm+" with that club."); speak+="You usually miss it "+tm+". "; }
+        if(tm){ lines.push("You usually miss it "+tm+" with that club."); speak+="You tend to miss it "+tm+" with that one, so plan for it. "; }
       } else {
         lines.push("I don't have your club distances yet, so I won't guess a club — tag your shots with a club (or set them under Full scorecard) and I'll learn them.");
-        speak+="I don't have your club distances yet, so I won't guess a club. ";
+        speak+="And I don't have your club distances yet, so no club call from me — I won't guess. ";
       }
     }
     var last=lastRoundOnHole();
@@ -1568,6 +1602,72 @@ function renderCaddyHome(){
   }
   renderCaddyChips();
 }
+/* --- Course finder on the Caddy card: the SAME OpenStreetMap lookup as the
+   Play tab's finder (fetchCoursesAround / the same Nominatim search /
+   startFoundCourse), surfaced here for one-touch use when he arrives at a
+   course. Nothing new is invented: found courses are created by
+   startFoundCourse exactly as on the Play tab (par 4s, blank yardages). --- */
+function caddyFindStatus(msg){ var el=$("caddyFindStatus"); if(el) el.textContent=msg; }
+function caddyClearFind(){ var w=$("caddyFindResults"); if(w) w.innerHTML=""; caddyFindStatus(""); }
+function caddyRenderFindResults(results){
+  var wrap=$("caddyFindResults"); if(!wrap) return; wrap.innerHTML="";
+  (results||[]).forEach(function(r){
+    var b=document.createElement("button"); b.className="big"; b.style.width="100%"; b.style.marginTop="8px"; b.style.textAlign="left";
+    b.textContent="⛳ "+r.name+(r.town? " — "+r.town:"")+(r.distMi!=null? " · "+r.distMi+" mi":"");
+    b.setAttribute("aria-label","Start a round at "+r.name);
+    b.onclick=function(){ startFoundCourse(r); };
+    wrap.appendChild(b);
+  });
+}
+/* A course he has played before, recognized from his own saved tees/pins —
+   tapping it just makes it the current course (no Go Golf detour). */
+function caddyPrependKnownCourse(found){
+  var rc=rawCourseById(found.courseId), wrap=$("caddyFindResults"); if(!wrap) return;
+  var b=document.createElement("button"); b.className="big"; b.style.width="100%"; b.style.marginTop="8px"; b.style.textAlign="left";
+  b.textContent="⛳ "+rc.name+" — you've played here";
+  b.setAttribute("aria-label","Play at "+rc.name);
+  b.onclick=function(){
+    state.courseId=found.courseId; save(); renderCourseSel(); renderHole(); renderCaddyHome(); caddyClearFind();
+    caddySay("You're playing "+rc.name+" — set as your course.");
+  };
+  wrap.insertBefore(b, wrap.firstChild);
+}
+function caddyFindNear(){
+  var wrap=$("caddyFindResults"); if(wrap) wrap.innerHTML="";
+  caddyFindStatus("Getting your location…");
+  getPos(function(pos){
+    lastKnownPos=pos;
+    var found=recognizeCourse(pos), known=(found && found.courseId!==state.courseId)? found : null;
+    caddyFindStatus("Looking for courses near you…");
+    fetchCoursesAround(pos, 40000).then(function(out){
+      caddyRenderFindResults(out);
+      if(known) caddyPrependKnownCourse(known);
+      if(known) caddyFindStatus("You're at "+rawCourseById(known.courseId).name+" — tap it to play here"+(out.length? ", or pick another course below:" : "."));
+      else if(!out.length) caddyFindStatus("No golf courses found within about 25 miles of here. Try the name search below, or map the course yourself under Full scorecard & tools.");
+      else caddyFindStatus(out.length+" course"+(out.length>1?"s":"")+" near you — tap one to start a round there:");
+      if(out.length) cacheFind(out, pos);
+    }).catch(function(){
+      if(known){ caddyRenderFindResults([]); caddyPrependKnownCourse(known); caddyFindStatus("You're at "+rawCourseById(known.courseId).name+" — tap it to play here. (The course lookup didn't answer for other courses nearby.)"); }
+      else { caddyFindStatus(FIND_FAIL); caddyRenderFindResults([]); }
+    });
+  }, function(msg){ caddyFindStatus(msg); });
+}
+function caddyFindByName(){
+  var inp=$("caddyFindQuery"), q=inp? inp.value.trim() : "";
+  if(!q){ caddyFindStatus("Type a course name or town first."); return; }
+  caddyFindStatus("Searching…");
+  fetchTO("https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=20&countrycodes=us&q="+encodeURIComponent(q+" golf course"), null, 15000).then(function(j){
+    var out=[];
+    (j||[]).forEach(function(r){ if(r.type!=="golf_course" && !/golf/i.test(r.display_name||"")) return;
+      var name=(r.display_name||"").split(",")[0]; if(!name) return;
+      var a=r.address||{}; var place=a.city||a.town||a.village||"";
+      var town=place+(a.state? (place? ", ":"")+a.state:"");
+      out.push({name:name, town:town, lat:parseFloat(r.lat), lng:parseFloat(r.lon), distMi:null}); });
+    if(!out.length){ caddyFindStatus("No courses matched that search. Try the course name or town."); caddyRenderFindResults([]); return; }
+    caddyFindStatus(out.length+" match"+(out.length>1?"es":"")+" — tap one to start a round there:");
+    caddyRenderFindResults(out); cacheFind(out, null);
+  }).catch(function(){ caddyFindStatus(FIND_FAIL); caddyRenderFindResults([]); });
+}
 /* --- Caddy screen wiring --- */
 var caddyFullOpen=false;
 function setFullPlay(open){
@@ -1578,6 +1678,9 @@ function setFullPlay(open){
 }
 $("caddyTalkBtn").onclick=function(){ caddyTalk(); };
 $("caddyAdviceBtn").onclick=function(){ caddyAdvice(); };
+$("caddyFindBtn").onclick=function(){ caddyFindNear(); };
+$("caddyFindNameBtn").onclick=function(){ caddyFindByName(); };
+$("caddyFindQuery").onkeydown=function(e){ if(e && (e.key==="Enter" || e.keyCode===13)){ e.preventDefault(); caddyFindByName(); } };
 $("caddyFullBtn").onclick=function(){ setFullPlay(!caddyFullOpen); };
 $("caddyBackBtn").onclick=function(){ setFullPlay(false); window.scrollTo(0,0); };
 $("caddySetPinBtn").onclick=function(){
