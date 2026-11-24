@@ -248,6 +248,23 @@ input[type=text],input[type=number],select{border-radius:12px}
 .gname{font-family:Georgia,'Times New Roman',serif;text-align:center;font-size:27px;font-weight:900;margin:2px 0;color:#ffd968}
 .gwelcome{text-align:center;color:#c8d4c2;margin:0 0 6px;font-size:15px}
 #saveToast{bottom:calc(84px + env(safe-area-inset-bottom))}
+/* ===== Caddy Mode (v1.9): ONE screen, two big buttons, no forms, no scroll-to-enter.
+   Everything auto-saves at check-in; there is no save/finish step in this flow. ===== */
+#caddyCard{padding:12px 14px 10px}
+.caddy-where{text-align:center;font-size:21px;font-weight:900;color:var(--green);line-height:1.2}
+.caddy-advice-btn{width:100%;min-height:72px;font-size:24px;font-weight:900;border-radius:20px;margin-top:10px}
+.caddy-talk{width:100%;min-height:84px;font-size:25px;font-weight:900;border-radius:20px;margin-top:8px}
+.caddy-talk.listening{box-shadow:0 0 0 4px rgba(255,217,104,.9);filter:brightness(1.12)}
+.caddy-advice{text-align:center;font-size:19px;font-weight:800;line-height:1.3;margin-top:8px;min-height:26px}
+.caddy-status{text-align:center;min-height:36px;margin:6px 0 0;font-weight:600}
+.caddy-pin{text-align:center;font-size:23px;font-weight:900;color:var(--green);margin-top:4px}
+.caddy-last,.caddy-mem{text-align:center;margin-top:3px;font-weight:600}
+.caddy-mem{color:var(--mut)}
+.caddy-shotrow{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:8px;font-weight:900}
+.caddy-shotrow button{width:52px;height:52px;font-size:24px;flex:none;padding:0}
+#caddyShotNum{font-size:22px;min-width:28px;text-align:center}
+#caddyClubChips{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding-bottom:4px;margin-top:8px}
+#caddyClubChips .clubchip{flex:none}
 </style>
 </head>
 <body>
@@ -292,7 +309,7 @@ input[type=text],input[type=number],select{border-radius:12px}
   <div class="tour-panel">
     <div class="tour-viewport" id="tourViewport">
       <section class="tour-slide"><div class="tour-icon">⛳</div><h2>Welcome to PinTally</h2><p>PinTally keeps your score, measures your shots, and remembers your courses — right on your phone.</p></section>
-      <section class="tour-slide"><div class="tour-icon">🔢</div><h2>Scoring comes first</h2><p>Tap Go Golf, pick where you're playing — everything else fills itself in. Choose 9 or 18 holes when you start, then your score sits at the top of Play, with the shot button and swing video right there with it.</p></section>
+      <section class="tour-slide"><div class="tour-icon">🎤</div><h2>Just talk to your Caddy</h2><p>Play opens on Caddy Mode: two big buttons and nothing to fill in. Tap <b>Caddy</b> for your yards and a club pick from your own numbers, or tap <b>Talk to Caddy</b> and say “Shot two, hole three, 7-iron” — it measures, counts, and saves itself. The full scorecard is still there, one tap down, when you want it.</p></section>
       <section class="tour-slide"><div class="tour-icon">🏌️</div><h2>One-button shots</h2><p>Tap once at the tee (first time only — it's remembered), then one tap at your ball after every shot. The distance and your score count themselves.</p></section>
       <section class="tour-slide"><div class="tour-icon">🚩</div><h2>Yards to the pin</h2><p>Stand at the hole once and tap “I'm at the hole”. The app remembers it forever and shows your yards to the pin.</p></section>
       <section class="tour-slide"><div class="tour-icon">🗺️</div><h2>Map any course yourself</h2><p>Course not in the app? As you play, tap where each tee and hole is. PinTally keeps your map on your phone.</p></section>
@@ -351,6 +368,32 @@ input[type=text],input[type=number],select{border-radius:12px}
   <section id="view-play" class="view on">
     <div id="stickyHole">Hole 1 of 9 · Par 4</div>
 
+    <!-- CADDY MODE (v1.9): the home experience. One screen, two big buttons,
+         no forms, nothing to save by hand — every check-in writes itself. -->
+    <div class="card" id="caddyCard">
+      <div id="caddyWhere" class="caddy-where">Hole 1 · Shot 1</div>
+      <button id="caddyAdviceBtn" class="accent caddy-advice-btn" type="button">⛳ Caddy — what have I got?</button>
+      <div id="caddyAdvice" class="caddy-advice" aria-live="polite"></div>
+      <button id="caddyTalkBtn" class="primary caddy-talk" type="button">🎤 Talk to Caddy</button>
+      <p id="caddyStatus" class="caddy-status">Tap Talk to Caddy and just say it — “Shot two, hole three, 7-iron.” One tap, no send button. Everything saves itself.</p>
+      <div id="caddyPinLine" class="caddy-pin"></div>
+      <div id="caddyLastShot" class="caddy-last"></div>
+      <div id="caddyMemory" class="caddy-mem"></div>
+      <div class="caddy-shotrow" role="group" aria-label="Shot number quick adjust">
+        <span>Shot</span>
+        <button id="caddyShotMinus" type="button" aria-label="Take back the last counted shot">−</button>
+        <span id="caddyShotNum">1</span>
+        <button id="caddyShotPlus" type="button" aria-label="Count one more shot (no GPS)">＋</button>
+      </div>
+      <div id="caddyClubChips" class="clubchips" aria-label="Club for the next shot"></div>
+      <div class="row" style="margin-top:8px">
+        <button id="caddySetPinBtn" type="button">📍 Set pin here</button>
+        <button id="caddyFullBtn" type="button">Full scorecard &amp; tools ▾</button>
+      </div>
+    </div>
+
+    <div id="fullPlayWrap" style="display:none">
+    <button id="caddyBackBtn" class="big" type="button" style="width:100%;margin-bottom:10px">🎤 Back to Caddy</button>
     <div class="card" id="scoreCard">
       <div class="row" style="align-items:flex-end">
         <button id="prevHoleBtn" aria-label="Previous hole">◀ Prev</button>
@@ -506,6 +549,7 @@ input[type=text],input[type=number],select{border-radius:12px}
       </div>
       <div id="findResults"></div>
     </div>
+    </div><!-- /fullPlayWrap -->
   </section>
 
   <!-- SHOTS VIEW (v1.7): this hole's drawn shots, past rounds on the hole, videos -->
@@ -637,6 +681,7 @@ input[type=text],input[type=number],select{border-radius:12px}
     <div class="card">
       <h3 style="margin-top:0">Help</h3>
       <button id="takeTourBtn" class="primary big" style="margin-bottom:12px">▶ Take the tour</button>
+      <p><b>Caddy Mode (the Play tab's home screen):</b> Two big buttons, no forms, and nothing to save by hand — every check-in saves itself the moment it lands, and a round just ends when you stop or start a new one. <b>⛳ Caddy</b> takes your position and answers with your yards: to the pin when a pin is set for the hole (say “set pin” to the mic, or tap “Set pin here”, when you're standing at the green — it's remembered per course), plus a club pick from <b>your own</b> logged averages. No pin and no numbers yet? It says so instead of guessing. <b>🎤 Talk to Caddy</b> is one tap — the mic is live right away, no send button. Say it naturally: “I'm about to drive off hole three, using my driver”, or at your ball, “Shot two, hole three, 7-iron — came up short.” It logs the shot with GPS, works out how far it went and how far you have left, and learns your clubs as you play. The − / ＋ row under it fixes the shot count by tap, the chip row sets your next club, and <b>Full scorecard &amp; tools</b> opens everything else (scorecard, swing video, course tools). Distances are “about” numbers — phone GPS is good to roughly 5–10 yards outdoors, not a laser. As you play, your check-ins build a map of each course on this phone; when you come back, the app recognizes the course from that map and reuses its tees and pins. Finished rounds get a <b>Round replay</b> in Past games — every hole drawn from the spots you logged.</p>
       <p><b>Your golfer profile:</b> The first time you open PinTally, you create your golfer profile — your name is the one thing it needs; a photo and your Instagram/Facebook are optional. That profile <b>is</b> Player 1: your name shows on your scoring rows, your scorecard, and your past games. Change it any time in <b>My profile</b> above and Player 1 updates with it. Your profile lives on this phone only — PinTally has no accounts yet, and nothing about it is uploaded anywhere.</p>
       <p><b>Share my round:</b> Open any past game and tap “📤 Share my round” to send a plain-text recap — your name, the course, your score, your best hole and longest drive — through your phone's usual share options, or copy it to paste anywhere. The app itself never posts anything.</p>
       <p><b>Map a course yourself:</b> If a course isn't in the app, start it under “Map a course yourself” on the Play tab, then as you play each hole tap “📍 I'm at the tee” on the tee box and “📍 I'm at the hole” at the flag. PinTally figures the hole's yardage from those two spots, may suggest a par (tap to accept — it never changes a par on its own), and remembers the whole map on this phone for every future round. The “Mapped: n of N holes” count shows your progress, and a mapped hole works like any other: saved tee for one-tap shot measuring, saved pin for yards to the pin.</p>
@@ -675,7 +720,7 @@ input[type=text],input[type=number],select{border-radius:12px}
 </nav>
 <script>
 "use strict";
-var VERSION = "v1.8.0";
+var VERSION = "v1.9.0";
 var STORE_KEY = "pintally_v1";
 
 /* Quail Ridge Golf and Event Venue, 519 Quail Run Rd, Grove, OK.
@@ -725,6 +770,7 @@ function defaultState(){
     penalties:{}, /* v1.7: courseHole -> penalty strokes counted without a ball position */
     clubDist:{}, /* v1.7: club -> {manual: yards|null, samples:[yards]} — his own club distances */
     clubStats:{}, /* v1.7: club -> {holesUsed, parOrBetter} — hole outcomes on holes where the club was used */
+    courseMaps:{}, /* v1.9: courseId -> {courseHole -> {tee, pin, shots:[{lat,lng}]}} — the map the app builds itself from Caddy Mode check-ins, kept across rounds */
     savedHoles:{}, /* hole -> true once that hole is confirmed saved (Save button or moving on) */
     videoRefs:{}, /* hole -> IndexedDB video id, for the CURRENT card only */
     history:[]
@@ -742,6 +788,7 @@ if(!state.shots || typeof state.shots!=="object") state.shots={};
 if(!state.penalties || typeof state.penalties!=="object") state.penalties={};
 if(!state.clubDist || typeof state.clubDist!=="object") state.clubDist={};
 if(!state.clubStats || typeof state.clubStats!=="object") state.clubStats={};
+if(!state.courseMaps || typeof state.courseMaps!=="object" || Array.isArray(state.courseMaps)) state.courseMaps={};
 /* §15 recovery hardening: a corrupted store must never dead-screen the app.
    Every core container is coerced back to its sane type at load; bad values
    are dropped, good ones kept. (Truncated/foreign JSON already falls back to
@@ -1022,7 +1069,7 @@ function shotsFor(h){ return state.shots[courseHole(h)]||[]; }
 function penFor(h){ return state.penalties[courseHole(h)]||0; }
 function autoTotal(h){ return shotsFor(h).length + penFor(h); }
 function teeAnchorFor(h){ var m=state.marks[h]; return (m&&m.tee)||teeFor(h)||null; }
-function shotsAnchor(h){ var s=shotsFor(h); if(s.length) return {lat:s[s.length-1].lat, lng:s[s.length-1].lng}; return teeAnchorFor(h); }
+function shotsAnchor(h){ var s=shotsFor(h); for(var i=s.length-1;i>=0;i--){ if(typeof s[i].lat==="number" && typeof s[i].lng==="number") return {lat:s[i].lat, lng:s[i].lng}; } return teeAnchorFor(h); }
 /* Auto-count moves Player 1's score ONLY when it was unset or equal to the
    previous auto total — a score he deliberately set differently is left alone
    (the card says so). Penalties are part of the auto total. */
@@ -1086,7 +1133,7 @@ function renderShots(){
   else btn.textContent="🏌️ I'm at my ball — count shot "+(shots.length+1);
   var list=$("shotList"); list.innerHTML="";
   shots.forEach(function(s, i){ var d=document.createElement("div"); d.className="shotrow";
-    d.innerHTML="<span>Shot "+(i+1)+(i===0?" · drive":"")+(s.club? " · "+esc(s.club):"")+"</span><span>"+s.dist+" yd</span>"; list.appendChild(d); });
+    d.innerHTML="<span>Shot "+(i+1)+(i===0?" · drive":"")+(s.club? " · "+esc(s.club):"")+"</span><span>"+(s.manual? "counted" : s.dist+" yd")+"</span>"; list.appendChild(d); });
   var pen=penFor(h);
   if(pen>0){ var pd=document.createElement("div"); pd.className="shotrow"; pd.innerHTML="<span>Penalties</span><span>+"+pen+"</span>"; list.appendChild(pd); }
   var auto=autoTotal(h), cur=state.scores["0-"+h];
@@ -1097,12 +1144,12 @@ function renderShots(){
     : !shots.length? "Tee is set ✓ — hit your shot, walk to your ball, and tap the big button."
     : "That's "+auto+" on this hole so far. The next shot measures from where your ball is now.";
   $("shotUndoBtn").disabled=!shots.length;
-  if(shots.length) $("shotsLive").textContent=shots[shots.length-1].dist+" yd";
+  if(shots.length) $("shotsLive").textContent=shots[shots.length-1].manual? "counted" : shots[shots.length-1].dist+" yd";
   else if(!tee){ $("shotsLive").textContent="—"; $("shotsPinLine").textContent=""; }
   var ll=$("shotsLastLine");
-  if(ll) ll.textContent=shots.length? ("Last shot: "+shots[shots.length-1].dist+" yd"+(shots[shots.length-1].club? " ("+shots[shots.length-1].club+")" : "")+" · "+shots.length+" shot"+(shots.length>1?"s":"")+" counted") : "";
+  if(ll) ll.textContent=shots.length? ("Last shot: "+(shots[shots.length-1].manual? "counted by tap" : shots[shots.length-1].dist+" yd")+(shots[shots.length-1].club? " ("+shots[shots.length-1].club+")" : "")+" · "+shots.length+" shot"+(shots.length>1?"s":"")+" counted") : "";
   if(tee || shots.length) startMeasureWatch(); else stopMeasureWatch();
-  renderSticky(); renderHoleMap(); renderShotsView();
+  renderSticky(); renderHoleMap(); renderShotsView(); renderCaddyHome();
 }
 function renderCaddie(){
   var line1=$("caddieLine1"); if(!line1) return;
@@ -1187,6 +1234,368 @@ function renderCaddie(){
     if(!bestClub || rate>bestClub.rate || (rate===bestClub.rate && st.holesUsed>bestClub.st.holesUsed)) bestClub={club:n, rate:rate, st:st}; });
   moneyEl.textContent=bestClub? ("💰 Your money club: "+bestClub.club+" — par or better "+bestClub.st.parOrBetter+" of "+bestClub.st.holesUsed+" holes.") : "";
 }
+/* ===== Caddy Mode (v1.9): the home experience. ONE screen, TWO big buttons.
+   "Caddy" = one-touch advice from a live GPS fix. "Talk to Caddy" = one-touch
+   logging: tap once, the mic is live immediately, he says one natural sentence
+   ("I'm about to drive off hole three, using my driver" / "Shot two, hole
+   three, 7-iron, came up short"), the app parses hole/shot/club/miss, takes a
+   GPS fix, and logs it. No menus, no confirm taps, no forms, no save step —
+   every check-in writes to storage the moment it lands, and a round simply
+   ends when he stops or starts a new one.
+   WATCH-READY: caddyCheckIn(pos, {club, missNote}) is the single atomic
+   check-in action — one call = one check-in with optional club/miss. A future
+   native watch companion drives exactly this action; no watch support is
+   faked in this web build.
+   Distances are honest: "about X yards" (phone GPS is ±5–10 yd), pin
+   distances only when a pin exists for the hole, club picks only from his
+   own logged/manual numbers — never invented. ===== */
+var pendingClub=null, pendingClubHole=null; /* club declared for the shot he is ABOUT to hit */
+function caddySay(msg){ var el=$("caddyStatus"); if(el) el.textContent=msg; }
+function caddySpeak(text){
+  try{
+    if(!window.speechSynthesis || typeof SpeechSynthesisUtterance==="undefined") return;
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=1.02;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+/* --- Course self-mapping: check-ins accumulate per course across rounds --- */
+function courseMapFor(cid, ch){
+  if(!state.courseMaps[cid]) state.courseMaps[cid]={};
+  if(!state.courseMaps[cid][ch] || typeof state.courseMaps[cid][ch]!=="object") state.courseMaps[cid][ch]={tee:null, pin:null, shots:[]};
+  var cm=state.courseMaps[cid][ch]; if(!Array.isArray(cm.shots)) cm.shots=[];
+  return cm;
+}
+function mapRecordCheckIn(pos, isTee){
+  var cm=courseMapFor(state.courseId, courseHole(state.currentHole));
+  if(isTee && !cm.tee) cm.tee={lat:pos.lat, lng:pos.lng};
+  var pin=pinFor(state.currentHole); if(pin) cm.pin={lat:pin.lat, lng:pin.lng};
+  cm.shots.push({lat:pos.lat, lng:pos.lng});
+  while(cm.shots.length>300) cm.shots.shift();
+}
+function mapRecordPin(pos){ var cm=courseMapFor(state.courseId, courseHole(state.currentHole)); cm.pin={lat:pos.lat, lng:pos.lng}; }
+/* Recognize a course he has mapped before: nearest stored tee/pin (or mapped
+   spot) within 250 yd. Returns {courseId, dist} or null. */
+function recognizeCourse(pos){
+  var best=null;
+  function consider(cid, pt){ if(!pt || typeof pt.lat!=="number" || typeof pt.lng!=="number") return; var d=haversineYards(pos, pt); if(d<=250 && (!best || d<best.dist)) best={courseId:cid, dist:d}; }
+  Object.keys(state.tees||{}).forEach(function(cid){ var by=state.tees[cid]||{}; Object.keys(by).forEach(function(hh){ consider(cid, by[hh]); }); });
+  Object.keys(state.pins||{}).forEach(function(cid){ var by=state.pins[cid]||{}; Object.keys(by).forEach(function(hh){ consider(cid, by[hh]); }); });
+  Object.keys(state.courseMaps||{}).forEach(function(cid){ var by=state.courseMaps[cid]||{}; Object.keys(by).forEach(function(hh){ var cm=by[hh]; if(cm){ consider(cid, cm.tee); consider(cid, cm.pin); } }); });
+  return best;
+}
+/* --- Shot recording: ONE path for the caddy flow and the scorecard button --- */
+function caddyAutoMiss(from, pos, pin){
+  if(!pin || !from) return null;
+  var toRad=Math.PI/180, RYD=6371000*1.09361, lat0=from.lat*toRad;
+  function loc(p){ return {x:(p.lng-from.lng)*Math.cos(lat0)*toRad*RYD, y:(p.lat-from.lat)*toRad*RYD}; }
+  var d=loc(pin), v=loc(pos);
+  var len=Math.sqrt(d.x*d.x+d.y*d.y); if(len<1) return null;
+  var ux=d.x/len, uy=d.y/len;
+  var along=v.x*ux+v.y*uy, perp=v.x*(-uy)+v.y*ux; /* perp > 0 = left of the line to the pin */
+  var parts=[];
+  if(along>len+12) parts.push("long");
+  else if(haversineYards(pos, pin)>=30 && along<len*0.55) parts.push("short");
+  if(perp>=20) parts.push("left"); else if(perp<=-20) parts.push("right");
+  return parts.length? parts.join(" ") : null;
+}
+function applyShotAt(pos, clubUsed, missNote){
+  var h=state.currentHole, ch=courseHole(h), tee=teeAnchorFor(h);
+  if(!tee) return null;
+  var anchor=shotsAnchor(h); if(!anchor) return null;
+  var existing=state.shots[ch]||[], lastP=null;
+  for(var i=existing.length-1;i>=0;i--){ if(typeof existing[i].lat==="number"){ lastP=existing[i]; break; } }
+  if(lastP && haversineYards(lastP, pos)<2) return {dup:true};
+  var prevAuto=autoTotal(h);
+  var dist=Math.round(haversineYards(anchor, pos));
+  var pin=pinFor(h), leave=pin? Math.round(haversineYards(pos, pin)) : null;
+  var miss=missNote || caddyAutoMiss(anchor, pos, pin);
+  if(!state.shots[ch]) state.shots[ch]=[];
+  /* Self-describing entry (lat/lng, hole, shot #, club, timestamp) so a future
+     device import (watch/glasses) can land in this same structure. */
+  state.shots[ch].push({dist:dist, lat:pos.lat, lng:pos.lng, club:clubUsed, miss:miss||null, leave:leave, hole:h, shot:state.shots[ch].length+1, ts:Date.now()});
+  learnFromShot(clubUsed, dist);
+  if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=tee; state.marks[h].ball=pos;
+  if(state.shots[ch].length===1) state.drives[h]=dist;
+  syncAutoScore(h, prevAuto); touchHole(h);
+  mapRecordCheckIn(pos, false); save();
+  return {n:state.shots[ch].length, dist:dist, leave:leave, miss:miss};
+}
+function undoLastShot(){
+  var h=state.currentHole, ch=courseHole(h), shots=state.shots[ch]||[]; if(!shots.length) return false;
+  var prevAuto=autoTotal(h), last=shots.pop();
+  unlearnFromShot(last.club, last.dist);
+  if(shots.length){ var lp=null; for(var i=shots.length-1;i>=0;i--){ if(typeof shots[i].lat==="number"){ lp=shots[i]; break; } }
+    if(lp){ if(state.marks[h]) state.marks[h].ball={lat:lp.lat, lng:lp.lng}; }
+    else if(state.marks[h]) delete state.marks[h].ball;
+  }
+  else { if(state.marks[h]) delete state.marks[h].ball; delete state.drives[h]; }
+  syncAutoScore(h, prevAuto); touchHole(h); save();
+  renderShots(); renderShot(); renderPlayers(); renderCard(); renderSaveUI(); renderCaddie();
+  flashSaved("Shot taken back");
+  return true;
+}
+/* THE atomic check-in (watch-ready). pos = where he is standing NOW, about to
+   hit. The position closes the previous shot (its distance is anchor -> here)
+   and opts.club names the club for the shot he is about to hit. */
+function caddyCheckIn(pos, opts){
+  opts=opts||{};
+  var h=state.currentHole, ch=courseHole(h);
+  if(!teeAnchorFor(h)){
+    if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; saveTee(h, pos); applyMappedYardage(h); touchHole(h);
+    if(opts.club){ pendingClub=opts.club; pendingClubHole=ch; selClub=opts.club; selClubHole=ch; }
+    mapRecordCheckIn(pos, true); save();
+    renderShot(); renderSaveUI(); renderShots(); renderMapCard(); renderCourseSel(); renderCaddie();
+    return {type:"tee", summary:"Starting spot set for hole "+h+" — saved, and remembered for this course."+(opts.club? " "+opts.club+" off the tee — got it." : "")+" Hit it, then Talk to Caddy at your ball."};
+  }
+  var clubUsed=pendingClub||selClub||"Other";
+  var r=applyShotAt(pos, clubUsed, opts.missNote||null);
+  if(!r) return {type:"none", summary:"Couldn't count that one — try again at your ball."};
+  if(r.dup) return {type:"dup", summary:"Same spot as your last check-in — not counted twice."};
+  if(opts.club){ pendingClub=opts.club; selClub=opts.club; selClubHole=ch; } else pendingClub=null;
+  pendingClubHole=ch;
+  renderShots(); renderShot(); renderPlayers(); renderCard(); renderSaveUI(); renderCaddie();
+  var s="Shot "+r.n+": about "+r.dist+" yd"+(clubUsed? " with your "+clubUsed : "")+".";
+  if(r.leave!=null) s+=" About "+r.leave+" yd left to the pin.";
+  else s+=" No pin set for this hole, so that's shot to shot.";
+  if(r.miss) s+=" Looked "+r.miss+".";
+  if(opts.club) s+=" "+opts.club+" next — got it.";
+  return {type:"shot", n:r.n, dist:r.dist, leave:r.leave, summary:s};
+}
+/* --- Speech parsing: natural sentences, on-device, rule-based --- */
+var CADDY_NUMWORDS={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,first:1,second:2,third:3,fourth:4,fifth:5,sixth:6,seventh:7,eighth:8,ninth:9,tenth:10};
+function caddyWordsToDigits(t){
+  return t.replace(/\b(one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)\b/g, function(w){ return String(CADDY_NUMWORDS[w]); });
+}
+function parseCaddySpeech(txt){
+  var t=caddyWordsToDigits(" "+String(txt||"").toLowerCase().replace(/[-]/g," ")+" ");
+  var out={hole:null, shot:null, club:null, miss:null, setPin:false, undo:false, declare:false};
+  var m=t.match(/hole\s*(\d+)/); if(m) out.hole=parseInt(m[1],10);
+  m=t.match(/shot\s*(\d+)/) || t.match(/(\d+)\s+shot\b/); if(m) out.shot=parseInt(m[1],10);
+  if(/set (the )?pin|pin here|mark (the )?pin|at the green|at the pin/.test(t)) out.setPin=true;
+  if(/\bundo\b|take (that|it) back|scratch that/.test(t)) out.undo=true;
+  if(/about to|i'm hitting|im hitting|using (my|the)|going to (hit|use|take)|i'll (hit|use|take)|taking (my|the)|teeing off|drive off|driving off|hitting my/.test(t)) out.declare=true;
+  if(/\bdriver\b/.test(t)) out.club="Driver";
+  else if(/\b3 wood\b/.test(t)) out.club="3 Wood";
+  else if(/\b[57] wood\b/.test(t)) out.club=t.match(/\b([57]) wood\b/)[1]+" Wood";
+  else if(/\bhybrid\b/.test(t)) out.club="Hybrid";
+  else if(/\bpitching wedge\b/.test(t) || /\bpw\b/.test(t)) out.club="PW";
+  else if(/\bgap wedge\b/.test(t) || /\bgw\b/.test(t)) out.club="GW";
+  else if(/\bsand wedge\b/.test(t) || /\bsw\b/.test(t)) out.club="SW";
+  else if(/\bputter\b/.test(t)) out.club="Putter";
+  else { m=t.match(/\b([4-9])\s*iron\b/) || t.match(/\biron\s*([4-9])\b/); if(m) out.club=m[1]+" Iron"; }
+  var missParts=[];
+  if(/came up short|too short|\bshort\b/.test(t)) missParts.push("short");
+  else if(/too long|\blong\b|flew the green|over the green|too much club/.test(t)) missParts.push("long");
+  if(/\bleft\b|pulled it/.test(t)) missParts.push("left");
+  else if(/\bright\b|pushed it/.test(t)) missParts.push("right");
+  if(!missParts.length && /in the water|\bwater\b|\bpond\b/.test(t)) missParts.push("in the water");
+  out.miss=missParts.length? missParts.join(" ") : null;
+  return out;
+}
+/* --- Talk to Caddy: one touch, mic live immediately, auto-submit on pause --- */
+var caddyRec=null, caddyFinalTxt="", caddySilenceTimer=null, caddySubmitted=false;
+function caddyTalk(){
+  var btn=$("caddyTalkBtn"); if(!btn) return;
+  if(!SR){ caddySay("Voice isn't available on this device/browser — the Caddy button, the shot row, and the club chips below still work, and the Full scorecard has the rest."); return; }
+  if(caddyRec){ try{ caddyRec.stop(); }catch(e){} return; } /* second tap = finish now; onend submits */
+  var rec;
+  try{ rec=new SR(); }catch(e){ caddySay("Voice couldn't start in this browser — the taps below still work."); return; }
+  caddyRec=rec; caddyFinalTxt=""; caddySubmitted=false;
+  rec.lang="en-US"; rec.interimResults=true; rec.continuous=true; rec.maxAlternatives=1;
+  btn.classList.add("listening"); btn.textContent="🎤 Listening… tap when done";
+  caddySay("Listening… just say it: “Shot two, hole three, 7-iron.”");
+  function armSilence(){
+    if(caddySilenceTimer) clearTimeout(caddySilenceTimer);
+    caddySilenceTimer=setTimeout(function(){ if(caddyRec===rec){ try{ rec.stop(); }catch(e){} } }, 1600);
+  }
+  rec.onresult=function(ev){
+    if(caddyRec!==rec) return;
+    var finals="", interim="";
+    if(ev && ev.results) for(var i=ev.resultIndex||0;i<ev.results.length;i++){ var r=ev.results[i]; if(!r || !r[0]) continue; if(r.isFinal) finals+=r[0].transcript; else interim+=r[0].transcript; }
+    if(finals) caddyFinalTxt+=(caddyFinalTxt && !/\s$/.test(caddyFinalTxt)? " " : "")+finals.trim();
+    if(finals || interim){ armSilence(); var heard=(caddyFinalTxt+" "+interim).trim(); if(heard) caddySay("Listening… “"+heard+"” — I'll log it when you pause."); }
+  };
+  rec.onerror=function(ev){
+    if(caddyRec!==rec) return;
+    if(ev && ev.error==="no-speech" && caddyFinalTxt.trim()) return; /* onend submits what was heard */
+    if(ev && (ev.error==="not-allowed" || ev.error==="service-not-allowed")) caddySay("The mic is blocked for this site — allow microphone access, or use the taps below.");
+    else if(ev && ev.error!=="aborted" && ev.error!=="no-speech") caddySay("Didn't catch that — try again, or use the taps below.");
+  };
+  rec.onend=function(){
+    if(caddyRec===rec) caddyRec=null;
+    if(caddySilenceTimer){ clearTimeout(caddySilenceTimer); caddySilenceTimer=null; }
+    btn.classList.remove("listening"); btn.textContent="🎤 Talk to Caddy";
+    if(caddySubmitted) return; caddySubmitted=true;
+    handleCaddySpeech(caddyFinalTxt);
+  };
+  try{ rec.start(); }
+  catch(e){ caddyRec=null; btn.classList.remove("listening"); btn.textContent="🎤 Talk to Caddy"; caddySay("Voice couldn't start in this browser — the taps below still work."); }
+}
+function handleCaddySpeech(txt){
+  if(!txt || !String(txt).trim()){ caddySay("Didn't catch that — try again, or use the taps below."); return; }
+  var p=parseCaddySpeech(txt);
+  if(p.undo){ if(undoLastShot()) caddySay("Took that last shot back."); else caddySay("No shots on this hole to take back."); return; }
+  if(p.hole!=null && p.hole!==state.currentHole){
+    if(p.hole>=1 && p.hole<=course().holes) leaveHole(p.hole);
+    else { caddySay("There's no hole "+p.hole+" on this course — you're on hole "+state.currentHole+"."); return; }
+  }
+  if(p.setPin){
+    getPos(function(pos){ savePin(state.currentHole, pos); applyMappedYardage(state.currentHole); touchHole(state.currentHole); mapRecordPin(pos); save(); renderPin(); renderMapCard(); renderCourseSel(); renderCaddie(); renderCaddyHome();
+      caddySay("Pin set for hole "+state.currentHole+" — saved for this course, so I'll give you pin distances from now on."); },
+      function(msg){ caddySay(msg); });
+    return;
+  }
+  getPos(function(pos){
+    lastKnownPos=pos;
+    var note="";
+    if(!hasCurrentCardData()){
+      var found=recognizeCourse(pos);
+      if(found && found.courseId!==state.courseId){
+        state.courseId=found.courseId; save(); renderCourseSel(); renderHole();
+        note="Recognized "+courseDisplayName()+" from your saved map — using its tees and pins. ";
+      }
+    }
+    var tee=teeAnchorFor(state.currentHole);
+    if(tee && p.declare){
+      var anchor=shotsAnchor(state.currentHole);
+      if(anchor && haversineYards(anchor, pos)<=12){
+        if(p.club){ pendingClub=p.club; pendingClubHole=courseHole(state.currentHole); selClub=p.club; selClubHole=pendingClubHole; save(); }
+        renderCaddyHome();
+        caddySay(note+"Got it"+(p.club? " — "+p.club : "")+" on hole "+state.currentHole+". Talk to me again at your ball and I'll measure it.");
+        return;
+      }
+    }
+    var r=caddyCheckIn(pos, {club:p.club, missNote:p.miss});
+    if(p.shot!=null && r.type==="shot" && p.shot!==r.n) note+="You said shot "+p.shot+" — your check-ins make that shot "+r.n+", so I counted it as "+r.n+". ";
+    if(p.shot!=null && p.shot>1 && r.type==="tee") note+="No starting spot was set for this hole, so I set it here — your count runs from here. ";
+    caddySay(note+r.summary);
+    if(r.type==="shot" || r.type==="tee") flashSaved("Saved ✓");
+  }, function(msg){ caddySay(msg); });
+}
+/* --- Caddy advice button: one touch, live fix, his own numbers only --- */
+function caddyAdvice(){
+  var out=$("caddyAdvice"); if(!out) return;
+  out.textContent="Checking where you are…";
+  getPos(function(pos){
+    lastKnownPos=pos;
+    var h=state.currentHole, c=course(), pin=pinFor(h), tee=teeAnchorFor(h), shots=shotsFor(h);
+    var lines=[], speak="";
+    var target=null, targetLabel="";
+    if(pin){
+      target=Math.round(haversineYards(pos, pin)); targetLabel="pin";
+      lines.push("You're about "+target+" yards out.");
+      speak="About "+target+" yards out. ";
+    } else if(tee){
+      var fromTee=Math.round(haversineYards(tee, pos)), cardYds=c.yards[h-1]||0;
+      if(cardYds>0 && fromTee>10){
+        target=Math.max(cardYds-fromTee, 0); targetLabel="card";
+        lines.push("No pin set for this hole yet — by the card ("+cardYds+" yd) you've covered about "+fromTee+", so roughly "+target+" left.");
+        speak="No pin set here yet. By the card, roughly "+target+" yards left. ";
+      } else {
+        lines.push("No pin set for this hole yet, and you're about "+fromTee+" yd from the tee. Say “set pin” when you're at the green and I'll give you real pin numbers.");
+        speak="No pin set for this hole yet. ";
+      }
+    } else {
+      lines.push("No pin and no tee set for this hole yet — Talk to Caddy at the tee to set your starting spot, and say “set pin” at the green.");
+      speak="I don't have this hole mapped yet. ";
+    }
+    if(target!=null){
+      var pick=pickClubFor(target);
+      if(pick && clubValue(pick.club)!=null){
+        var avg=clubValue(pick.club), learned=clubLearnedAvg(pick.club)!=null;
+        lines.push("That's your "+pick.club+" — you "+(learned? "average about "+avg : "have it set at "+avg)+" with it.");
+        speak+="That's your "+pick.club+". You "+(learned? "average about "+avg : "have it set at "+avg)+" with it. ";
+        var tm=typicalMiss(pick.club);
+        if(tm){ lines.push("You usually miss it "+tm+" with that club."); speak+="You usually miss it "+tm+". "; }
+      } else {
+        lines.push("I don't have your club distances yet, so I won't guess a club — tag your shots with a club (or set them under Full scorecard) and I'll learn them.");
+        speak+="I don't have your club distances yet, so I won't guess a club. ";
+      }
+    }
+    var last=lastRoundOnHole();
+    if(last && last.shots && last.shots.length){
+      var nx=shots.length, prevShot=last.shots[nx];
+      if(prevShot && prevShot.club) lines.push("Last time, shot "+(nx+1)+" here was your "+prevShot.club+(prevShot.dist? " ("+prevShot.dist+" yd)" : "")+".");
+    }
+    out.textContent=lines.join(" ");
+    if(speak) caddySpeak(speak.trim());
+  }, function(msg){ out.textContent=msg; });
+}
+/* --- Caddy memory: typical miss per club, from the shot log only --- */
+function typicalMiss(club){
+  var counts={}, total=0;
+  function scan(arr){ (arr||[]).forEach(function(s){ if(!s || s.club!==club || !s.miss) return; ["short","long","left","right"].forEach(function(w){ if(String(s.miss).indexOf(w)>=0){ counts[w]=(counts[w]||0)+1; total++; } }); }); }
+  Object.keys(state.shots||{}).forEach(function(k){ scan(state.shots[k]); });
+  (state.history||[]).forEach(function(e){ if(e && e.shots) Object.keys(e.shots).forEach(function(k){ scan(e.shots[k]); }); });
+  if(total<2) return null;
+  var best=null; Object.keys(counts).forEach(function(w){ if(!best || counts[w]>counts[best]) best=w; });
+  return (best && counts[best]>=Math.ceil(total/2))? best : null;
+}
+/* --- Caddy home render --- */
+function renderCaddyChips(){
+  var wrap=$("caddyClubChips"); if(!wrap) return; wrap.innerHTML="";
+  CLUBS.forEach(function(name){ var b=document.createElement("button"); b.type="button"; b.className="clubchip"+(name===selClub?" selected":""); b.textContent=name;
+    b.setAttribute("aria-label","Next club: "+name);
+    b.onclick=function(){ selClub=name; selClubHole=courseHole(state.currentHole); pendingClub=name; pendingClubHole=selClubHole; renderCaddyChips(); caddySay(name+" is your next club — Talk to Caddy at your ball."); };
+    wrap.appendChild(b); });
+}
+function renderCaddyHome(){
+  var where=$("caddyWhere"); if(!where) return;
+  var h=state.currentHole, c=course(), shots=shotsFor(h), tee=teeAnchorFor(h), pin=pinFor(h), anchor=shotsAnchor(h);
+  where.textContent="Hole "+h+" of "+c.holes+" · Par "+c.pars[h-1]+" · "+(tee? ("Shot "+(shots.length+1)) : "At the tee — shot 1");
+  var numEl=$("caddyShotNum"); if(numEl) numEl.textContent=shots.length+1;
+  var pl=$("caddyPinLine");
+  if(pl){
+    if(pin && anchor) pl.textContent="About "+Math.round(haversineYards(anchor, pin))+" yd to the pin (from your last check-in)";
+    else if(pin) pl.textContent="Pin is set — Talk to Caddy and I'll give you your yards.";
+    else pl.textContent="No pin for this hole yet — say “set pin” at the green for pin distances. Until then I measure shot to shot.";
+  }
+  var ls=$("caddyLastShot"), last=shots.length? shots[shots.length-1] : null;
+  if(ls) ls.textContent=last? ("Last shot: "+(last.club||"—")+" · "+(last.manual? "counted by tap" : "about "+last.dist+" yd")+(last.leave!=null? " · about "+last.leave+" yd left" : "")+(last.miss? " · "+last.miss : "")) : "No shots yet on this hole.";
+  var mem=$("caddyMemory");
+  if(mem){
+    var line="", pinD=(pin && anchor)? Math.round(haversineYards(anchor, pin)) : null, pick=pinD!=null? pickClubFor(pinD) : null;
+    if(pick && clubValue(pick.club)!=null){
+      line="Your "+pick.club+" averages about "+clubValue(pick.club)+" yd — this is about "+pinD+" to the pin.";
+      var tm2=typicalMiss(pick.club); if(tm2) line+=" You usually miss it "+tm2+".";
+    } else {
+      var cands=clubCandidates();
+      if(cands.length) line="Your clubs so far: "+cands.slice(-3).map(function(x){ return x.club+" ~"+x.value+" yd"; }).join(" · ")+".";
+      else line="Tag your shots with a club and I'll learn your distances as you play.";
+    }
+    mem.textContent=line;
+  }
+  renderCaddyChips();
+}
+/* --- Caddy screen wiring --- */
+var caddyFullOpen=false;
+function setFullPlay(open){
+  caddyFullOpen=open;
+  var w=$("fullPlayWrap"); if(w) w.style.display=open? "" : "none";
+  var b=$("caddyFullBtn"); if(b) b.textContent=open? "Caddy view ▴" : "Full scorecard & tools ▾";
+  if(open && w) w.scrollIntoView({behavior:"smooth", block:"start"});
+}
+$("caddyTalkBtn").onclick=function(){ caddyTalk(); };
+$("caddyAdviceBtn").onclick=function(){ caddyAdvice(); };
+$("caddyFullBtn").onclick=function(){ setFullPlay(!caddyFullOpen); };
+$("caddyBackBtn").onclick=function(){ setFullPlay(false); window.scrollTo(0,0); };
+$("caddySetPinBtn").onclick=function(){
+  getPos(function(pos){ savePin(state.currentHole, pos); applyMappedYardage(state.currentHole); touchHole(state.currentHole); mapRecordPin(pos); save(); renderPin(); renderMapCard(); renderCourseSel(); renderCaddie(); renderCaddyHome();
+    caddySay("Pin set for hole "+state.currentHole+" — saved for this course."); },
+    function(msg){ caddySay(msg); });
+};
+$("caddyShotPlus").onclick=function(){
+  var h=state.currentHole, ch=courseHole(h), prevAuto=autoTotal(h);
+  if(!state.shots[ch]) state.shots[ch]=[];
+  var anchor=shotsAnchor(h), pin=pinFor(h);
+  state.shots[ch].push({dist:0, lat:null, lng:null, club:pendingClub||selClub||"Other", miss:null, leave:(pin && anchor)? Math.round(haversineYards(anchor, pin)) : null, manual:true, hole:h, shot:state.shots[ch].length+1, ts:Date.now()});
+  syncAutoScore(h, prevAuto); touchHole(h); save();
+  renderShots(); renderPlayers(); renderCard(); renderSaveUI(); renderCaddie();
+  caddySay("Counted shot "+state.shots[ch].length+" on hole "+h+" (tapped in — no GPS distance). Saved.");
+};
+$("caddyShotMinus").onclick=function(){ if(undoLastShot()) caddySay("Took the last shot back on hole "+state.currentHole+"."); else caddySay("No shots on this hole to take back."); };
+
 function renderClubsEditor(){
   var ed=$("clubsEditor"); if(!ed) return; ed.innerHTML="";
   CLUBS.forEach(function(name){
@@ -1288,10 +1697,10 @@ function renderHoleMap(){
   var c=course(), h=state.currentHole, m=state.marks[h]||{};
   var tee=m.tee||teeFor(h), pin=pinFor(h);
   var shots=shotsFor(h);
-  var ballPts=shots.length? shots.map(function(s){ return {lat:s.lat, lng:s.lng, dist:s.dist}; })
+  var ballPts=shots.length? shots.filter(function(s){ return typeof s.lat==="number"; }).map(function(s){ return {lat:s.lat, lng:s.lng, dist:s.dist}; })
     : (m.ball? [{lat:m.ball.lat, lng:m.ball.lng, dist:Math.round(haversineYards(tee||m.tee||m.ball, m.ball))}] : []);
   var last=lastRoundOnHole();
-  var ghost=(last && last.shots && last.shots.length)? last.shots : null;
+  var ghost=(last && last.shots && last.shots.length)? last.shots.filter(function(s){ return typeof s.lat==="number"; }) : null;
   var legend=$("holeMapLegend");
   var total=(tee&&pin)? Math.round(haversineYards(tee, pin)) : null;
   $("holeMapMeta").textContent="Hole "+h+" · Par "+c.pars[h-1]+(total!=null? " · "+total+" yd tee to pin" : (c.yards[h-1]? " · "+c.yards[h-1]+" yd" : ""));
@@ -1318,10 +1727,10 @@ function renderShotsView(){
   title.textContent="Hole "+h+" shots";
   $("shotsViewMeta").textContent=courseDisplayName(c)+" · Par "+c.pars[h-1]+(c.yards[h-1]? " · "+c.yards[h-1]+" yd" : "");
   var tee=teeAnchorFor(h), pin=pinFor(h);
-  var ballPts=shots.length? shots.map(function(s){ return {lat:s.lat, lng:s.lng, dist:s.dist, club:s.club}; })
+  var ballPts=shots.length? shots.filter(function(s){ return typeof s.lat==="number"; }).map(function(s){ return {lat:s.lat, lng:s.lng, dist:s.dist, club:s.club}; })
     : (m.ball? [{lat:m.ball.lat, lng:m.ball.lng, dist:Math.round(haversineYards(tee||m.tee||m.ball, m.ball))}] : []);
   var last=lastRoundOnHole();
-  var ghost=(last && last.shots && last.shots.length)? last.shots : null;
+  var ghost=(last && last.shots && last.shots.length)? last.shots.filter(function(s){ return typeof s.lat==="number"; }) : null;
   var mapEl=$("shotsViewMap");
   if(tee || pin || ballPts.length || ghost) mapEl.innerHTML=holeMapSVG(tee, pin, ballPts, ghost, {w:340, h:380, clubLabels:true});
   else mapEl.innerHTML='<p style="font-weight:700">No shots on this hole yet — tap the shot button on Play.</p>';
@@ -1330,7 +1739,7 @@ function renderShotsView(){
   if(!shots.length) list.innerHTML='<p class="note">No shots on this hole yet — tap the shot button on Play.</p>';
   else {
     shots.forEach(function(s, i){ var d=document.createElement("div"); d.className="shotrow";
-      d.innerHTML="<span>Shot "+(i+1)+(s.club? " · "+esc(s.club) : "")+"</span><span>"+s.dist+" yd · score: "+(i+1)+"</span>"; list.appendChild(d); });
+      d.innerHTML="<span>Shot "+(i+1)+(s.club? " · "+esc(s.club) : "")+"</span><span>"+(s.manual? "counted" : s.dist+" yd")+" · score: "+(i+1)+"</span>"; list.appendChild(d); });
     var pen=penFor(h);
     var tot=document.createElement("p"); tot.className="note";
     tot.textContent="Counted score so far: "+autoTotal(h)+(pen? " (including +"+pen+" penalt"+(pen>1?"ies":"y")+")" : "");
@@ -1627,6 +2036,22 @@ function renderRoundDetail(idx){
         shHtml+="<br>Hole "+ph+": "+arr.map(function(s, i){ return (i===0? "Drive " : "Shot "+(i+1)+" ")+s.dist+" yd"+(s.club? " ("+esc(s.club)+")" : ""); }).join(" · ");
       });
       sl.innerHTML=shHtml; det.appendChild(sl);
+      /* Round replay (v1.9): the whole game mapped from the logged GPS spots —
+         per hole, points in order, labeled with club + yards to the next spot.
+         Renders purely from the saved shot log; no pin is drawn because the
+         round snapshot doesn't store one (the map never invents spots). */
+      var rp=document.createElement("div"); rp.style.marginTop="12px";
+      var rpHtml="<b>🗺️ Round replay — every hole, mapped</b><p class='note' style='margin:4px 0'>Drawn from the GPS spots logged that round — points in the order you played them, labeled with club and yards.</p>", anyMap=false;
+      Object.keys(r.shots).map(Number).sort(function(a, b){ return a-b; }).forEach(function(ph){
+        var arr=(r.shots[ph]||[]).filter(function(s){ return typeof s.lat==="number" && typeof s.lng==="number"; });
+        if(!arr.length) return; anyMap=true;
+        var tee=null;
+        for(var eh=1; eh<=r.holes; eh++){ if(entryPhysical(eh, r)===ph && r.marks && r.marks[eh] && r.marks[eh].tee){ tee=r.marks[eh].tee; break; } }
+        var pts=arr.map(function(s){ return {lat:s.lat, lng:s.lng, dist:s.dist, club:s.club}; });
+        rpHtml+="<div style='margin-top:10px'><b>Hole "+ph+"</b>"+holeMapSVG(tee, null, pts, null, {w:340, h:300, clubLabels:true})+"<p style='margin:4px 0'>"
+          +arr.map(function(s, i){ var nx=arr[i+1]; return "Shot "+(i+1)+" · "+esc(s.club||"—")+" · "+(nx? nx.dist+" yd to the next spot" : (s.leave!=null? "about "+s.leave+" yd left at the last spot" : "last spot on the hole")); }).join("<br>")+"</p></div>";
+      });
+      if(anyMap){ rp.innerHTML=rpHtml; det.appendChild(rp); }
     }
   } else {
     t.innerHTML=""; t.style.display="none";
@@ -2264,36 +2689,16 @@ $("clearShotBtn").onclick=function(){ var h=state.currentHole; delete state.mark
 /* One-button shots wiring (v1.7) */
 $("shotMainBtn").onclick=function(){ var h=state.currentHole, tee=teeAnchorFor(h);
   if(!tee){ getPos(function(pos){ if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=pos; saveTee(h, pos); applyMappedYardage(h); touchHole(h); save(); renderShot(); renderSaveUI(); renderShots(); renderMapCard(); renderCourseSel(); renderCaddie(); flashSaved("Tee set for hole "+h+" ✓ — it's remembered for this course"); }, function(msg){ $("shotsStatus").textContent=msg; }); return; }
-  var anchor=shotsAnchor(h), prevAuto=autoTotal(h);
-  getPos(function(pos){ var dist=Math.round(haversineYards(anchor, pos)), ch=courseHole(h);
-    /* Double-tap guard (found by the v1.7 chaos pass): a second tap landing
-       on the SAME spot as the shot just counted is a pocket/accidental
-       double-tap, not a new shot — counting it would invent a 0-yard stroke. */
-    var existing=state.shots[ch]||[];
-    if(existing.length && haversineYards(existing[existing.length-1], pos) < 2){ flashSaved("Same spot as your last shot — not counted twice."); return; }
-    if(!state.shots[ch]) state.shots[ch]=[];
-    var club=selClub||"Other";
-    state.shots[ch].push({dist:dist, lat:pos.lat, lng:pos.lng, club:club});
-    learnFromShot(club, dist);
-    if(!state.marks[h]) state.marks[h]={}; state.marks[h].tee=tee; state.marks[h].ball=pos;
-    if(state.shots[ch].length===1) state.drives[h]=dist;
-    syncAutoScore(h, prevAuto);
-    touchHole(h); save();
+  getPos(function(pos){ var r=applyShotAt(pos, selClub||"Other", null); /* v1.9: shared recording path with Caddy Mode (incl. the v1.7 double-tap guard inside applyShotAt) */
+    if(!r){ $("shotsStatus").textContent="Set the tee first."; return; }
+    if(r.dup){ flashSaved("Same spot as your last shot — not counted twice."); return; }
     renderShots(); renderShot(); renderPlayers(); renderCard(); renderSaveUI(); renderCaddie();
-    if(state.shots[ch].length===1){ var pbd=prevBestDriveOnHole(h);
-      if(pbd!=null && dist>pbd){ flashSaved("💪 Good shot! "+dist+" yd — your best drive on this hole."); return; } }
-    flashSaved("Shot "+state.shots[ch].length+": "+dist+" yd ✓");
+    if(r.n===1){ var pbd=prevBestDriveOnHole(h);
+      if(pbd!=null && r.dist>pbd){ flashSaved("💪 Good shot! "+r.dist+" yd — your best drive on this hole."); return; } }
+    flashSaved("Shot "+r.n+": "+r.dist+" yd ✓");
   }, function(msg){ $("shotsStatus").textContent=msg; });
 };
-$("shotUndoBtn").onclick=function(){ var h=state.currentHole, ch=courseHole(h), shots=state.shots[ch]||[]; if(!shots.length) return;
-  var prevAuto=autoTotal(h), last=shots.pop();
-  unlearnFromShot(last.club, last.dist);
-  if(shots.length){ var lp=shots[shots.length-1]; if(state.marks[h]) state.marks[h].ball={lat:lp.lat, lng:lp.lng}; }
-  else { if(state.marks[h]) delete state.marks[h].ball; delete state.drives[h]; }
-  syncAutoScore(h, prevAuto); touchHole(h); save();
-  renderShots(); renderShot(); renderPlayers(); renderCard(); renderSaveUI(); renderCaddie();
-  flashSaved("Shot taken back");
-};
+$("shotUndoBtn").onclick=function(){ undoLastShot(); }; /* v1.9: shared with Caddy Mode */
 $("shotPenaltyBtn").onclick=function(){ var h=state.currentHole, ch=courseHole(h), prevAuto=autoTotal(h);
   state.penalties[ch]=(state.penalties[ch]||0)+1; syncAutoScore(h, prevAuto); touchHole(h); save();
   renderShots(); renderPlayers(); renderCard(); renderSaveUI();
@@ -2389,10 +2794,10 @@ $("finishRoundBtn").onclick=function(){ var c=course(); var parts=[]; for(var i=
   state.lastCourseId=c.id;
   state.videoRefs={}; state.scores={}; state.drives={}; state.marks={}; state.savedHoles={}; state.currentHole=1; state.shots={}; state.penalties={}; selClubHole=null; selClub=null; stopMeasureWatch(); measureStartPos=null; save(); renderHole(); renderPlayers(); renderCard(); renderHistory(); showView("history"); };
 $("clearDemoBtn").onclick=function(){ if(confirm("Clear sample data? This clears the current card, saved rounds, and all swing videos on this device. Your profile, mapped courses, saved tees and pins stay.")){ Object.keys(state.videoRefs).forEach(function(hh){ deleteVideoId(state.videoRefs[hh]); }); state.history.forEach(function(r){ var vv=r.videos||{}; Object.keys(vv).forEach(function(hh){ deleteVideoId(vv[hh]); }); });
-  var keepPins=state.pins, keepTees=state.tees, keepFound=state.foundCourses, keepProfile=state.profile, keepTour=state.tourSeen;
+  var keepPins=state.pins, keepTees=state.tees, keepFound=state.foundCourses, keepProfile=state.profile, keepTour=state.tourSeen, keepMaps=state.courseMaps;
   var keepCustom={}, keepGps={};
   (keepFound||[]).forEach(function(c){ if(c.customMapped){ if(state.custom[c.id]) keepCustom[c.id]=state.custom[c.id]; if(state.gpsYards[c.id]) keepGps[c.id]=state.gpsYards[c.id]; } });
-  state=Object.assign(defaultState(),{termsAccepted:true, tourSeen:keepTour, profile:keepProfile, pins:keepPins, tees:keepTees, foundCourses:keepFound, custom:keepCustom, gpsYards:keepGps});
+  state=Object.assign(defaultState(),{termsAccepted:true, tourSeen:keepTour, profile:keepProfile, pins:keepPins, tees:keepTees, foundCourses:keepFound, custom:keepCustom, gpsYards:keepGps, courseMaps:keepMaps});
   if(state.profile.name) state.players[0]=state.profile.name;
   save(); renderProfile(); renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory(); } };
 $("filmBtn").onclick=function(){ startRecording(); };
