@@ -265,6 +265,106 @@ input[type=text],input[type=number],select{border-radius:12px}
 #caddyShotNum{font-size:22px;min-width:28px;text-align:center}
 #caddyClubChips{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding-bottom:4px;margin-top:8px}
 #caddyClubChips .clubchip{flex:none}
+/* ===== PinTally v1.11.0 NEON LIGHTS — Travis's order 2026-11-27: "make the page
+   neon colors and neon lights theme." Night-golf under the lights: near-black
+   base with a deep-green tint, neon doing the work — electric green = primary
+   actions & headings, cyan = distance & club call, amber = score values,
+   magenta-red = danger/delete only. Glow lives on accents, headings, numbers
+   and controls; body text stays near-white on near-black (19:1) so the
+   readability law holds outdoors. Pure theme: no layout, feature or
+   behavior change — every rule below only re-skins an existing selector. */
+:root{--green:#39ff6a;--green2:#17d654;--green3:#0fbf47;--bg:#050807;--card:#0a120d;--ink:#f2fff5;--mut:#a9bfae;--line:#24513a;--gold:#ffb300;--goldsoft:#2a2003;--shadow:0 12px 30px rgba(0,0,0,.55)}
+body{background-color:#050807;background:radial-gradient(620px 300px at 12% -40px,rgba(57,255,106,.12),rgba(57,255,106,0) 60%),radial-gradient(720px 340px at 92% -60px,rgba(34,230,255,.09),rgba(34,230,255,0) 60%),linear-gradient(180deg,#04070a 0,#050807 100%);color:var(--ink)}
+::selection{background:#39ff6a;color:#03130a}
+h1,h2,h3,h4,.tour-slide h2,#stickyHole,#celebrate{font-family:inherit}
+header{background:linear-gradient(180deg,#03130a,#07130b);border-bottom:2px solid #39ff6a;box-shadow:0 0 18px rgba(57,255,106,.45),0 4px 16px rgba(0,0,0,.5)}
+header h1{color:#39ff6a;text-shadow:0 0 6px rgba(57,255,106,.85),0 0 20px rgba(57,255,106,.5)}
+header p{color:#a9bfae;opacity:1}
+.card,.player-card{background:linear-gradient(180deg,#0c1710,#081008)!important;color:var(--ink);border:1.5px solid #24513a;box-shadow:0 0 0 1px rgba(57,255,106,.05),0 0 16px rgba(57,255,106,.10),0 14px 30px rgba(0,0,0,.5)}
+.card h3,.card h4{color:#39ff6a;text-shadow:0 0 8px rgba(57,255,106,.55)}
+label{color:#39ff6a}
+.note,.sub{color:#a9bfae}
+button{background:#0d1f13;color:var(--ink);border:1.5px solid #2c6a44;box-shadow:0 0 8px rgba(57,255,106,.14)}
+button.primary{background:linear-gradient(180deg,#4dff7d,#17d654);border-color:#39ff6a;color:#03130a;font-weight:900;box-shadow:0 0 16px rgba(57,255,106,.5)}
+button.accent{background:linear-gradient(180deg,#5ff0ff,#17b8e6);border-color:#22e6ff;color:#02141a;font-weight:900;box-shadow:0 0 16px rgba(34,230,255,.45)}
+button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #22e6ff;outline-offset:2px;box-shadow:0 0 12px rgba(34,230,255,.65)}
+#deleteVideoBtn,#clearDemoBtn{background:#1a0710;color:#ff5c8a;border-color:#ff2d78;box-shadow:0 0 10px rgba(255,45,120,.3)}
+input[type=text],input[type=number],select{background:#060d09;color:var(--ink);border:1.5px solid #2c6a44;font-weight:600}
+input::placeholder{color:#6f8a76}
+input[type=range]{accent-color:#39ff6a}
+input[type=checkbox]{accent-color:#17d654}
+.mic{background:#241a02;border-color:#ffb300;color:#ffb300;box-shadow:0 0 10px rgba(255,179,0,.35)}
+/* Score values = amber, on dark inset panels (were cream panels in v1.7) */
+.stepper .val{background:#140f02;color:#ffb300;border-radius:14px;padding:2px 14px;box-shadow:inset 0 0 0 1.5px #8a6100,0 0 12px rgba(255,179,0,.3);text-shadow:0 0 10px rgba(255,179,0,.6)}
+.stepper .step-plus{background:linear-gradient(180deg,#4dff7d,#17d654);color:#03130a;border-color:#39ff6a;box-shadow:0 0 12px rgba(57,255,106,.45)}
+.stepper .step-minus{background:#0d1f13;color:var(--ink);border-color:#2c6a44}
+#scoreCard>.row:first-child{background:#0a120d;border-radius:16px;padding:10px 12px;box-shadow:inset 0 0 0 1.5px #24513a,0 0 12px rgba(57,255,106,.12)}
+#scoreCard>.row:first-child button{background:#0d1f13;color:var(--ink);border-color:#2c6a44}
+#holeMeta{color:#f2fff5;text-shadow:0 0 8px rgba(57,255,106,.35)}
+#pinLine{color:#a9bfae}
+/* Distance & club call = cyan */
+.bigdist,#shotsCard .bigdist{background:#04121a;color:#22e6ff;border-radius:16px;padding:6px 10px;box-shadow:inset 0 0 0 1.5px #155e75,0 0 16px rgba(34,230,255,.30);text-shadow:0 0 12px rgba(34,230,255,.75)}
+#caddieCard .rec{background:#04121a;color:#22e6ff;border-radius:14px;padding:10px 14px;box-shadow:inset 0 0 0 1.5px #155e75,0 0 14px rgba(34,230,255,.3);text-shadow:0 0 8px rgba(34,230,255,.5)}
+.caddy-pin{color:#22e6ff;text-shadow:0 0 10px rgba(34,230,255,.6)}
+#stickyHole{background:linear-gradient(90deg,#07130b,#0a1f10);border:1.5px solid #39ff6a;border-left:7px solid #ffb300;color:#f2fff5;box-shadow:0 0 14px rgba(57,255,106,.4)}
+.holechip{background:#0d1f13;color:#a9bfae;border-color:#2c6a44}
+.holechip.on{background:linear-gradient(180deg,#4dff7d,#17d654);color:#03130a;border-color:#39ff6a;box-shadow:0 0 12px rgba(57,255,106,.55)}
+.clubchip{background:#0d1f13;color:var(--ink);border-color:#2c6a44}
+.clubchip.selected{background:linear-gradient(180deg,#5ff0ff,#17b8e6);border-color:#22e6ff;color:#02141a;box-shadow:0 0 12px rgba(34,230,255,.5)}
+.autotag{background:#0a2413;color:#39ff6a;box-shadow:inset 0 0 0 1px #2c6a44}
+#saveHoleBtn.saved{background:#0a2413;color:#39ff6a;border:3px solid #39ff6a;box-shadow:0 0 14px rgba(57,255,106,.45)}
+#saveToast{background:linear-gradient(180deg,#4dff7d,#17d654);color:#03130a;box-shadow:0 0 18px rgba(57,255,106,.55)}
+table th{background:#07130b;color:#39ff6a;font-weight:850;border-color:#24513a;text-shadow:0 0 8px rgba(57,255,106,.5)}
+table td{border-color:#24513a;color:var(--ink)}
+table tr:nth-child(even) td{background:#0d1a11}
+.kv{border-color:#24513a}.kv b{color:#ffb300}
+.status-box{background:#0a120d;border-color:#24513a}
+.status-box .st-big{color:#22e6ff;text-shadow:0 0 8px rgba(34,230,255,.5)}
+.shotrow,.clubrow,.map-hole-row{border-color:#24513a}
+.clubrow .clubstat{color:#a9bfae}
+.pastround{border-color:#24513a;background:#0a120d}
+.map-create{border-color:#24513a}
+.profile-mini{color:#39ff6a}
+.social-links a,.view a{color:#22e6ff}
+.pill{background:#0a2413;color:#39ff6a;border:1.5px solid #2c6a44}
+.pill.gold{background:#ffb300;color:#231600;border-color:#8a6100;box-shadow:0 0 10px rgba(255,179,0,.4)}
+.pill.light{background:#04121a;color:#22e6ff;border-color:#155e75}
+.badge{background:#ffb300;color:#231600;box-shadow:0 0 8px rgba(255,179,0,.45)}
+nav.tabs{background:rgba(3,10,6,.97);border-top:2px solid #24513a;box-shadow:0 -3px 16px rgba(0,0,0,.5),0 -1px 12px rgba(57,255,106,.15)}
+nav.tabs button{color:#a9bfae}
+nav.tabs button.on{background:none;color:#39ff6a;box-shadow:none}
+nav.tabs button.on .ic{background:linear-gradient(180deg,#4dff7d,#17d654);box-shadow:0 0 12px rgba(57,255,106,.6)}
+footer{color:#a9bfae}
+#view-video button.on{background:linear-gradient(180deg,#4dff7d,#17d654);color:#03130a;border-color:#39ff6a}
+/* Gates, tour, Go Golf — dark glass with neon frames */
+#termsGate{background:rgba(2,6,4,.9)}
+#profileGate{background:rgba(2,6,4,.94)}
+#goGolfOverlay{background:rgba(2,6,4,.94)}
+#tourOverlay{background:linear-gradient(160deg,#020604,#07130b 60%,#04121a)}
+.tour-panel{background:#0a120d;box-shadow:0 0 0 1.5px #24513a,0 0 30px rgba(57,255,106,.25),0 22px 50px rgba(0,0,0,.6)}
+.tour-icon{background:#0a2413;border-color:#39ff6a;box-shadow:0 0 16px rgba(57,255,106,.5)}
+.tour-slide h2{color:#39ff6a;text-shadow:0 0 10px rgba(57,255,106,.55)}
+.tour-slide p{color:#d7e8d8}
+.tour-controls{border-top:1.5px solid #24513a;background:#060d09}
+.tour-dot{background:#24513a}
+.tour-dot.on{background:#39ff6a;box-shadow:0 0 8px rgba(57,255,106,.7)}
+.gname{color:#39ff6a;text-shadow:0 0 10px rgba(57,255,106,.6)}
+.gwelcome{color:#a9bfae}
+.avatar{border-color:#39ff6a;box-shadow:0 0 10px rgba(57,255,106,.4)}
+.avatar-fallback{background:#ffb300;color:#231600;border-color:#ffcf4d;box-shadow:0 0 10px rgba(255,179,0,.45)}
+#celebrate{background:linear-gradient(160deg,#0a2413,#04140a);border:2px solid #39ff6a;color:#ffb300;text-shadow:0 0 12px rgba(255,179,0,.6);box-shadow:0 0 26px rgba(57,255,106,.5),0 16px 40px rgba(0,0,0,.55)}
+#distStamp{background:rgba(3,10,6,.88);color:#39ff6a}
+/* Hole map diagram: dark canvas, neon lines (JS colors match below) */
+#holeMapSvg{background:#06110b;border-color:#24513a}
+.hole-map-label{fill:#eafff2;stroke:#04140a}
+.hole-map-dist{fill:#22e6ff;stroke:#04140a}
+/* Caddy Mode (v1.9) in neon */
+.caddy-where{color:#39ff6a;text-shadow:0 0 10px rgba(57,255,106,.55)}
+.caddy-advice{color:var(--ink)}
+.caddy-status,.caddy-last{color:#d7e8d8}
+.caddy-mem{color:#a9bfae}
+#caddyShotNum{color:#ffb300;text-shadow:0 0 10px rgba(255,179,0,.65)}
+.caddy-talk.listening{box-shadow:0 0 0 4px rgba(255,45,120,.85),0 0 22px rgba(255,45,120,.6);filter:brightness(1.12)}
 </style>
 </head>
 <body>
@@ -398,6 +498,8 @@ input[type=text],input[type=number],select{border-radius:12px}
         <button id="caddyFullBtn" type="button">Full scorecard &amp; tools ▾</button>
       </div>
     </div>
+
+    <div id="widgetImports"></div>
 
     <div id="fullPlayWrap" style="display:none">
     <button id="caddyBackBtn" class="big" type="button" style="width:100%;margin-bottom:10px">🎤 Back to Caddy</button>
@@ -727,7 +829,7 @@ input[type=text],input[type=number],select{border-radius:12px}
 </nav>
 <script>
 "use strict";
-var VERSION = "v1.9.0";
+var VERSION = "v1.11.0";
 var STORE_KEY = "pintally_v1";
 
 /* Quail Ridge Golf and Event Venue, 519 Quail Run Rd, Grove, OK.
@@ -780,12 +882,13 @@ function defaultState(){
     courseMaps:{}, /* v1.9: courseId -> {courseHole -> {tee, pin, shots:[{lat,lng}]}} — the map the app builds itself from Caddy Mode check-ins, kept across rounds */
     savedHoles:{}, /* hole -> true once that hole is confirmed saved (Save button or moving on) */
     videoRefs:{}, /* hole -> IndexedDB video id, for the CURRENT card only */
+    widgetImports:[], /* v1.10: scores recorded on the Android home-screen widget, after import {label, ts} — kept on Play until dismissed so nothing recorded on the widget is ever silently lost */
     history:[]
   };
 }
 var state = defaultState();
 try{ var raw = localStorage.getItem(STORE_KEY); if(raw){ var p = JSON.parse(raw); if(p && typeof p==="object") state = Object.assign(defaultState(), p); } }catch(e){}
-function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); return true; }catch(e){ return false; } }
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){ return false; } publishWidgetRoundState(); return true; }
 
 /* v1.5 profile normalization + one source of truth: profile.name IS Player 1. */
 if(!state.profile || typeof state.profile!=="object") state.profile={name:"", photo:"", insta:"", fb:""};
@@ -796,6 +899,7 @@ if(!state.penalties || typeof state.penalties!=="object") state.penalties={};
 if(!state.clubDist || typeof state.clubDist!=="object") state.clubDist={};
 if(!state.clubStats || typeof state.clubStats!=="object") state.clubStats={};
 if(!state.courseMaps || typeof state.courseMaps!=="object" || Array.isArray(state.courseMaps)) state.courseMaps={};
+if(!Array.isArray(state.widgetImports)) state.widgetImports=[];
 /* §15 recovery hardening: a corrupted store must never dead-screen the app.
    Every core container is coerced back to its sane type at load; bad values
    are dropped, good ones kept. (Truncated/foreign JSON already falls back to
@@ -1767,31 +1871,31 @@ function holeMapSVG(tee, pin, ballPts, ghost, opts){
   var P={}; Object.keys(T).forEach(function(k){ P[k]=S(T[k]); });
   function segLabel(a, b, d){ var mx=Math.round((a.x+b.x)/2), my=Math.round((a.y+b.y)/2); return '<text class="hole-map-dist" font-size="16" text-anchor="middle" x="'+mx+'" y="'+my+'">'+d+' yd</text>'; }
   var svg='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Hole map diagram" style="width:100%;height:auto;display:block;border-radius:14px;border:1.5px solid var(--line)">';
-  svg+='<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="#dff0df"></rect>';
+  svg+='<rect x="0" y="0" width="'+W+'" height="'+H+'" fill="#06110b"></rect>';
   /* GHOST layer first (underneath): last time's chain, muted gray + dashed. */
   if(ghost && ghost.length){
     var gPts=ghost.map(function(g, i){ return P["g"+i]; });
     var gPrev=(tee? P.tee : null), gPath="";
-    gPts.forEach(function(p){ gPath+=(gPrev? '<line x1="'+gPrev.x+'" y1="'+gPrev.y+'" x2="'+p.x+'" y2="'+p.y+'" stroke="#8b968c" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round"></line>' : ""); gPrev=p; });
+    gPts.forEach(function(p){ gPath+=(gPrev? '<line x1="'+gPrev.x+'" y1="'+gPrev.y+'" x2="'+p.x+'" y2="'+p.y+'" stroke="#3f5a48" stroke-width="3" stroke-dasharray="7 6" stroke-linecap="round"></line>' : ""); gPrev=p; });
     svg+=gPath;
-    gPts.forEach(function(p){ svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="8" fill="#c3ccc4" stroke="#8b968c" stroke-width="2"></circle>'; });
-    if(gPts.length) svg+='<text class="hole-map-label" font-size="14" fill="#66705f" text-anchor="middle" x="'+gPts[0].x+'" y="'+(gPts[0].y-16)+'">Last time</text>';
+    gPts.forEach(function(p){ svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="8" fill="#223528" stroke="#3f5a48" stroke-width="2"></circle>'; });
+    if(gPts.length) svg+='<text class="hole-map-label" font-size="14" fill="#7d8f80" text-anchor="middle" x="'+gPts[0].x+'" y="'+(gPts[0].y-16)+'">Last time</text>';
   }
   /* The main chain on top. */
   var lastBall=ballPts.length? ballPts[ballPts.length-1] : null;
-  if(tee && pin && !ballPts.length) svg+='<line x1="'+P.tee.x+'" y1="'+P.tee.y+'" x2="'+P.pin.x+'" y2="'+P.pin.y+'" stroke="#7aa67f" stroke-width="3" stroke-dasharray="3 7" stroke-linecap="round"></line>';
+  if(tee && pin && !ballPts.length) svg+='<line x1="'+P.tee.x+'" y1="'+P.tee.y+'" x2="'+P.pin.x+'" y2="'+P.pin.y+'" stroke="#22e6ff" stroke-width="3" stroke-dasharray="3 7" stroke-linecap="round"></line>';
   ballPts.forEach(function(b, i){
     var from=(i===0)? (tee? P.tee : null) : P["b"+(i-1)];
-    if(from) svg+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+P["b"+i].x+'" y2="'+P["b"+i].y+'" stroke="#0b3d24" stroke-width="5" stroke-linecap="round"></line>'+segLabel(from, P["b"+i], b.dist);
+    if(from) svg+='<line x1="'+from.x+'" y1="'+from.y+'" x2="'+P["b"+i].x+'" y2="'+P["b"+i].y+'" stroke="#39ff6a" stroke-width="5" stroke-linecap="round"></line>'+segLabel(from, P["b"+i], b.dist);
   });
-  if(lastBall && pin){ var lbP=P["b"+(ballPts.length-1)]; svg+='<line x1="'+lbP.x+'" y1="'+lbP.y+'" x2="'+P.pin.x+'" y2="'+P.pin.y+'" stroke="#8a5a00" stroke-width="4" stroke-dasharray="9 7" stroke-linecap="round"></line>'+segLabel(lbP, P.pin, Math.round(haversineYards(lastBall, pin))); }
-  if(tee) svg+='<circle cx="'+P.tee.x+'" cy="'+P.tee.y+'" r="13" fill="#ffffff" stroke="#0b3d24" stroke-width="4"></circle><text class="hole-map-label" font-size="16" text-anchor="middle" x="'+P.tee.x+'" y="'+(P.tee.y+32)+'">Tee</text>';
+  if(lastBall && pin){ var lbP=P["b"+(ballPts.length-1)]; svg+='<line x1="'+lbP.x+'" y1="'+lbP.y+'" x2="'+P.pin.x+'" y2="'+P.pin.y+'" stroke="#22e6ff" stroke-width="4" stroke-dasharray="9 7" stroke-linecap="round"></line>'+segLabel(lbP, P.pin, Math.round(haversineYards(lastBall, pin))); }
+  if(tee) svg+='<circle cx="'+P.tee.x+'" cy="'+P.tee.y+'" r="13" fill="#ffffff" stroke="#39ff6a" stroke-width="4"></circle><text class="hole-map-label" font-size="16" text-anchor="middle" x="'+P.tee.x+'" y="'+(P.tee.y+32)+'">Tee</text>';
   ballPts.forEach(function(b, i){
     var isLast=(i===ballPts.length-1), p=P["b"+i];
     var label=opts.clubLabels? (b.club || ("Ball "+(i+1))) : (isLast? "You / Ball" : "Ball "+(i+1));
-    svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(isLast? 12 : 9)+'" fill="#e9a319" stroke="#7a4d00" stroke-width="3"></circle><text class="hole-map-label" font-size="15" text-anchor="middle" x="'+p.x+'" y="'+(p.y-20)+'">'+esc(label)+'</text>';
+    svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(isLast? 12 : 9)+'" fill="#ffb300" stroke="#8a6100" stroke-width="3"></circle><text class="hole-map-label" font-size="15" text-anchor="middle" x="'+p.x+'" y="'+(p.y-20)+'">'+esc(label)+'</text>';
   });
-  if(pin) svg+='<line x1="'+P.pin.x+'" y1="'+(P.pin.y+13)+'" x2="'+P.pin.x+'" y2="'+(P.pin.y-15)+'" stroke="#101f16" stroke-width="3"></line><polygon points="'+P.pin.x+','+(P.pin.y-15)+' '+(P.pin.x+17)+','+(P.pin.y-9)+' '+P.pin.x+','+(P.pin.y-3)+'" fill="#c62828"></polygon><circle cx="'+P.pin.x+'" cy="'+P.pin.y+'" r="5" fill="#101f16"></circle><text class="hole-map-label" font-size="16" text-anchor="middle" x="'+P.pin.x+'" y="'+(P.pin.y+32)+'">Pin</text>';
+  if(pin) svg+='<line x1="'+P.pin.x+'" y1="'+(P.pin.y+13)+'" x2="'+P.pin.x+'" y2="'+(P.pin.y-15)+'" stroke="#eafff2" stroke-width="3"></line><polygon points="'+P.pin.x+','+(P.pin.y-15)+' '+(P.pin.x+17)+','+(P.pin.y-9)+' '+P.pin.x+','+(P.pin.y-3)+'" fill="#ff2d78"></polygon><circle cx="'+P.pin.x+'" cy="'+P.pin.y+'" r="5" fill="#eafff2"></circle><text class="hole-map-label" font-size="16" text-anchor="middle" x="'+P.pin.x+'" y="'+(P.pin.y+32)+'">Pin</text>';
   svg+='</svg>';
   return svg;
 }
@@ -2953,6 +3057,159 @@ window.addEventListener("resize", function(){ if($("view-video").classList.conta
 $("termsCheck").onchange=function(){ $("agreeBtn").disabled = !$("termsCheck").checked; };
 $("agreeBtn").onclick=function(){ state.termsAccepted=true; save(); $("termsGate").style.display="none";
   if(!state.profile.name) showProfileGate(); else if(!state.tourSeen) openTour(); };
+/* ===== Android home-screen widget (v1.10) =====
+   The installed Android app ships a home-screen widget: it shows the
+   current hole, yards to the pin and the caddy's club call, and records
+   each hole's score (voice, or the widget's own − / ＋ steppers) WITHOUT
+   the app opening. The native shell and this page share two stores:
+   - Round state: this page PUBLISHES the current round (course, date,
+     hole, par, pin, last GPS fix, your club distances, current score)
+     through window.CaddyShotWidget.publishRoundState(json) on every
+     save(). The widget reads it to draw itself, and recomputes distance
+     and club from the fix + pin + your numbers — a widget cannot track
+     GPS continuously, so the distance is only as fresh as the last fix;
+     the widget labels its age and has a ↻ button for a fresh one-shot
+     fix. The bridge exists ONLY inside the Android app; the web version
+     never sees it and everything here is a no-op there.
+   - Pending scores: the widget appends entries ({type:"score", hole,
+     strokes} from the steppers, {type:"voice", text} from the speech
+     prompt) to its own store. On load, this page reads them through
+     readPendingScores(), applies them to Player 1's card, clears the
+     store, and lists exactly what it did in the "From your widget" card
+     on Play — an entry it can't understand is listed as not applied,
+     never silently dropped. Before the terms gate is accepted the
+     entries stay pending natively. */
+function widgetBridge(){
+  try { return (typeof window !== "undefined" && window.CaddyShotWidget) ? window.CaddyShotWidget : null; } catch(e){ return null; }
+}
+var widgetLastFix = null, widgetLastFixAt = 0;
+function buildWidgetRoundState(){
+  var c = course(), h = state.currentHole, pin = pinFor(h);
+  var fix = (typeof lastKnownPos !== "undefined" && lastKnownPos) ? lastKnownPos : null;
+  if (fix && fix !== widgetLastFix){ widgetLastFix = fix; widgetLastFixAt = Date.now(); }
+  var dist = null, club = null;
+  if (fix && pin){
+    dist = Math.round(haversineYards(fix, pin));
+    var pick = pickClubFor(dist);
+    if (pick) club = pick.club;
+  }
+  var now = new Date(), z = function(n){ return (n < 10 ? "0" : "") + n; };
+  return {
+    courseId: state.courseId,
+    courseName: courseDisplayName(c),
+    dateISO: now.getFullYear() + "-" + z(now.getMonth() + 1) + "-" + z(now.getDate()),
+    dateLabel: now.toLocaleDateString(),
+    hole: h, holes: c.holes, par: c.pars[h - 1] || null, holeYards: c.yards[h - 1] || null,
+    pin: pin ? { lat: pin.lat, lng: pin.lng } : null,
+    lastFix: fix ? { lat: fix.lat, lng: fix.lng, ts: widgetLastFixAt || Date.now() } : null,
+    distToPin: dist, club: club,
+    clubs: clubCandidates(),
+    score: state.scores["0-" + h] || 0,
+    updatedAt: Date.now()
+  };
+}
+function publishWidgetRoundState(){
+  var b = widgetBridge();
+  if (!b || typeof b.publishRoundState !== "function") return;
+  try { b.publishRoundState(JSON.stringify(buildWidgetRoundState())); } catch(e){}
+}
+function widgetScoreWordNum(tok){
+  if (/^\d+$/.test(tok)) return parseInt(tok, 10);
+  var w = (typeof CADDY_NUMWORDS !== "undefined") ? CADDY_NUMWORDS[tok] : null;
+  return (typeof w === "number") ? w : null;
+}
+/* Parse a widget voice entry: "five", "scored 5 on hole seven",
+   "six strokes", "hole 3, got a 4". Returns {hole, strokes} or null. */
+function parseWidgetScoreText(text){
+  var t = " " + String(text || "").toLowerCase().replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ") + " ";
+  var hole = null, m = t.match(/\bhole\s+([a-z]+|\d+)\b/);
+  if (m){ var hn = widgetScoreWordNum(m[1]); if (hn != null && hn >= 1 && hn <= 18) hole = hn; }
+  var strokes = null, rest = t;
+  var pats = [/\b(?:scored|scoring|shot|got|made|took|had|finished with|carded)\s+(?:a\s+|an\s+)?([a-z]+|\d+)\b/,
+              /\b([a-z]+|\d+)\s+(?:strokes|stroke|shots|shot|on the hole)\b/,
+              /\b([a-z]+|\d+)\s+on\s+(?:hole\s+)?(?:[a-z]+|\d+)\b/];
+  for (var i = 0; i < pats.length && strokes == null; i++){
+    var mm = t.match(pats[i]);
+    if (mm){ var sn = widgetScoreWordNum(mm[1]); if (sn != null && sn >= 1 && sn <= 30) strokes = sn; }
+  }
+  if (strokes == null){
+    var nums = t.match(/\b([a-z]+|\d+)\b/g) || [];
+    for (var j = 0; j < nums.length; j++){
+      var n = widgetScoreWordNum(nums[j]);
+      if (n != null && n >= 1 && n <= 30 && n !== hole){ strokes = n; break; }
+    }
+  }
+  if (strokes == null) return null;
+  return { hole: hole || state.currentHole, strokes: strokes };
+}
+function applyWidgetScore(hole, strokes){
+  var c = course();
+  if (!(hole >= 1 && hole <= c.holes)) return false;
+  var key = "0-" + hole;
+  if (strokes <= 0) delete state.scores[key]; else state.scores[key] = Math.min(30, strokes);
+  touchHole(hole);
+  return true;
+}
+function renderWidgetImports(){
+  var box = $("widgetImports"); if (!box) return;
+  var list = state.widgetImports || [];
+  if (!list.length){ box.innerHTML = ""; return; }
+  box.innerHTML = '<div class="card">' +
+    '<div class="row" style="justify-content:space-between;align-items:center"><h3 style="margin:0">🎙️ From your home-screen widget</h3>' +
+    '<button class="small" id="btnDismissWidgetImports" type="button" aria-label="Dismiss widget entries">✕</button></div>' +
+    '<p class="note">You recorded these on the widget without opening CaddyShot. Here is exactly what was done with each one:</p>' +
+    list.map(function(en){ return '<p style="margin:4px 0">' + esc(en.label) + '</p>'; }).join("") + '</div>';
+  var d = $("btnDismissWidgetImports");
+  if (d) d.onclick = function(){ state.widgetImports = []; save(); renderWidgetImports(); };
+}
+var widgetImportHandled = false;
+function importWidgetScores(){
+  if (widgetImportHandled) return;
+  var bridge = widgetBridge();
+  if (!bridge || typeof bridge.readPendingScores !== "function"){ widgetImportHandled = true; return; }
+  if (!state.termsAccepted) return;   // gate not accepted yet: leave entries pending natively
+  var raw = null;
+  try { raw = bridge.readPendingScores(); } catch(e){ return; }
+  if (!raw){ widgetImportHandled = true; return; }
+  var entries = null;
+  try { entries = JSON.parse(raw); } catch(e){ entries = null; }
+  if (!entries || !entries.length){ widgetImportHandled = true; return; }
+  widgetImportHandled = true;
+  try { if (typeof bridge.clearPendingScores === "function") bridge.clearPendingScores(); } catch(e){}
+  var lines = [];
+  entries.forEach(function(en){
+    if (!en) return;
+    if (en.type === "score" && typeof en.hole === "number" && typeof en.strokes === "number"){
+      if (applyWidgetScore(en.hole, en.strokes))
+        lines.push("✓ Hole " + en.hole + ": score set to " + en.strokes + " (widget − / ＋).");
+      else
+        lines.push("• Hole " + en.hole + ": " + en.strokes + " — not applied (that hole isn't in this round).");
+    } else if (en.type === "voice" && en.text){
+      var p = parseWidgetScoreText(en.text);
+      if (p && applyWidgetScore(p.hole, p.strokes))
+        lines.push("✓ Hole " + p.hole + ": score set to " + p.strokes + " — you said “" + String(en.text) + "”.");
+      else
+        lines.push("• “" + String(en.text) + "” — couldn't read a score out of that, so nothing was changed. Set it on the card if it was a score.");
+    }
+  });
+  if (!lines.length) return;
+  var stamped = lines.map(function(l){ return { label: l, ts: Date.now() }; });
+  state.widgetImports = stamped.concat(state.widgetImports || []);
+  save(); renderPlayers(); renderCard(); renderHole(); renderWidgetImports();
+  flashSaved("Imported " + lines.length + " widget " + (lines.length === 1 ? "entry" : "entries") + " ✓");
+}
+function maybeImportWidgetScores(){
+  if (!widgetBridge()) return;
+  if (state.termsAccepted){ importWidgetScores(); return; }
+  var tries = 0;
+  var iv = setInterval(function(){
+    tries++;
+    if (widgetImportHandled){ clearInterval(iv); return; }
+    if (state.termsAccepted){ clearInterval(iv); importWidgetScores(); }
+    else if (tries > 1500){ clearInterval(iv); }   // ~10 min behind the gate: stand down; entries stay pending natively
+  }, 400);
+}
+
 /* Email us link (Help §11) */
 (function(){ var subj=encodeURIComponent("PinTally help — "+VERSION); var body=encodeURIComponent("Tell us what you were trying to do and what happened:\n\n"); $("emailUsBtn").href="mailto:whitewolfbackoffice@gmail.com?subject="+subj+"&body="+body; })();
 $("verFoot").textContent = VERSION;
@@ -2961,6 +3218,7 @@ if(state.termsAccepted) $("termsCheck").checked = true;
 seedTeesFromMarks();
 if(state.lastFind && state.lastFind.results && state.lastFind.results.length){ $("findStatus").textContent="Your last course search ("+state.lastFind.when+"):"; renderFindResults(state.lastFind.results); }
 renderCourseSel(); renderHole(); renderPlayers(); renderCard(); renderHistory(); renderProfile();
+renderWidgetImports(); publishWidgetRoundState(); maybeImportWidgetScores();
 /* First-run order: terms -> golfer profile -> tour -> app. */
 if(state.termsAccepted && !state.profile.name) showProfileGate();
 else if(state.termsAccepted && !state.tourSeen) openTour();
